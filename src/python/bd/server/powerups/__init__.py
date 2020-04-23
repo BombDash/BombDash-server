@@ -1,2 +1,2 @@
 # Copyright (c) 2020 BombDash
-from . import server
+from . import factory
