@@ -86,7 +86,7 @@ def _bomb_init(self,
         materials = (factory.bomb_material,
                      ba.sharedobj('object_material'))
 
-    if self.bomb_type in ('impact', 'heal', 'portal', 'holy', 'airstrike'):
+    if self.bomb_type in ('impact', 'health', 'portal', 'holy', 'airstrike'):
         materials = materials + (factory.impact_blast_material,)
     elif self.bomb_type in ('land_mine', 'elon_mine'):
         materials = materials + (factory.land_mine_no_explode_material,)
@@ -100,7 +100,7 @@ def _bomb_init(self,
 
     fuse_time = None
 
-    if self.bomb_type == 'heal':
+    if self.bomb_type == 'health':
         self.node = ba.newnode('prop', delegate=self, attrs={
             'body': 'sphere',
             'position': position,
@@ -207,8 +207,8 @@ def _bomb_init(self,
         self.node = ba.newnode(
             'prop', delegate=self, owner=owner, attrs={
                 'body': 'sphere',
-                'model': factory.stickyBombModel,
-                'light_model': factory.stickyBombModel,
+                'model': factory.sticky_bomb_model,
+                'light_model': factory.sticky_bomb_model,
                 'color_texture': factory.sticky_gift_tex,
                 'position': position,
                 'velocity': velocity,
@@ -324,6 +324,25 @@ def _bomb_init(self,
     ba.animate(self.node, "model_scale", {0: 0, 0.2: 1.3, 0.26: 1})
 
 
+def bomb_handle_impact(self):
+    node = ba.get_collision_info("opposing_node")
+    # if we're an impact bomb and we came from this node, don't explode...
+    # alternately if we're hitting another impact-bomb from the same
+    # source, don't explode...
+    try:
+        node_delegate = node.getdelegate()
+    except Exception:
+        node_delegate = None
+    if node:
+        if (self.bomb_type in ('impact', 'holy', 'health', 'portal', 'airstrike')
+                and (node is self.owner or
+                     (isinstance(node_delegate, stdbomb.Bomb)
+                      and node_delegate.bomb_type in ('impact', 'holy', 'health', 'portal', 'airstrike')
+                      and node_delegate.owner is self.owner))):
+            return
+        self.handlemessage(ExplodeMessage())
+
+
 def _decorator_factory(f):
     def func(self, *args, **kwargs):
         f(self, *args, **kwargs)
@@ -367,3 +386,5 @@ def _decorator_factory(f):
 
 stdbomb.BombFactory.__init__ = _decorator_factory(stdbomb.BombFactory.__init__)
 stdbomb.Bomb.__init__ = _bomb_init
+stdbomb.Bomb._handle_impact = bomb_handle_impact
+
