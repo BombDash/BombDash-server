@@ -7,7 +7,7 @@ from typing import Sequence, Tuple
 
 def get_powerup_distribution() -> Sequence[Tuple[str, int]]:
     """Set of BombDash server powerups."""
-    return (('lucky_block', 3), ('speed', 2), ('jump_boost', 2), ('companion_cube', 2), ('sticky_gift', 2),
+    return (('lucky_block', 3), ('speed', 2), ('jump_boost', 2), ('companion_cube', 2), ('sticky_gift_bombs', 2),
             ('portal_bombs', 2), ('elon_mines', 2), ('airstrike_bombs', 2), ('heal_bombs', 1), ('holy_bombs', 1))
 
 
@@ -27,7 +27,7 @@ def _decorator(f):
         self.tex_airstrike_bomb = ba.gettexture('menuIcon')
         self.tex_cube_companion = ba.gettexture('landMineLit')
         self.tex_elon_musk_mine = ba.gettexture('achievementMine')
-        self.tex_sticky_gift = ba.gettexture('achievementCrossHair')
+        self.tex_sticky_gift_bomb = ba.gettexture('achievementCrossHair')
 
     return func
 

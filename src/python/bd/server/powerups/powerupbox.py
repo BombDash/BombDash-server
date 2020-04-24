@@ -67,8 +67,8 @@ def _decorator_powerupbox(f):
         elif poweruptype == 'heal_bombs':
             tex = factory.tex_health_bomb
             light_color = (1.0, 1.0, 1.0)
-        elif poweruptype == 'sticky_gift':
-            tex = factory.tex_sticky_gift
+        elif poweruptype == 'sticky_gift_bombs':
+            tex = factory.tex_sticky_gift_bomb
             light_color = (1.0, 1.0, 1.0)
         elif poweruptype == 'lucky_block':
             tex = factory.tex_lucky_block

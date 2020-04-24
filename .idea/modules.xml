@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/BombDash-server.iml" filepath="$PROJECT_DIR$/.idea/BombDash-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../bombdash_server/data/scripts/.idea/scripts.iml" filepath="$PROJECT_DIR$/../bombdash_server/data/scripts/.idea/scripts.iml" />
     </modules>
   </component>
 </project>
