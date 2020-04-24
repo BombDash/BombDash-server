@@ -269,7 +269,7 @@ def _decorator(f):
                         position=(self.node.position[0],
                                   self.node.position[1] + 3,
                                   self.node.position[2]),
-                        source_player=self.sourcePlayer,
+                        source_player=self.source_player,
                         owner=self.node,
                         blast_radius=6)
 
@@ -370,10 +370,10 @@ def _decorator(f):
                         offset += 1.5
                 elif event_number == 12:
                     color = {
-                        0: (0, 0, 3),
-                        500: (0, 3, 0),
-                        1000: (3, 0, 0),
-                        1500: (0, 0, 3)
+                        0.0: (0, 0, 3),
+                        0.5: (0, 3, 0),
+                        1.0: (3, 0, 0),
+                        1.5: (0, 0, 3)
                     }
 
                     ba.animate_array(self.node, 'color', 3, color, True)
