@@ -312,7 +312,7 @@ def _decorator(f):
                         chunk_type=random.choice(chunk_type))
 
                     ba.camerashake(1)
-                    ba.setmusic(ba.MusicType('corkPop'))  # position=self.node.position?
+                    ba.playsound(ba.getsound('corkPop'))  # position=self.node.position?
                 elif event_number == 8:
                     position = self.node.position
 

@@ -1,8 +1,11 @@
 # Copyright (c) 2020 BombDash
 
+
+import random
 import ba
 import bastd.actor.bomb as stdbomb
-from bastd.actor.bomb import ExplodeMessage, get_factory, WarnMessage, ArmMessage, ImpactMessage
+from bastd.actor.bomb import ExplodeMessage, get_factory, WarnMessage, ArmMessage, ImpactMessage, SplatMessage
+from bd.server.actor import Portals, AutoAim  # , TreatmentArea, Airstrike
 
 
 class SetStickyMessage:
@@ -343,6 +346,156 @@ def bomb_handle_impact(self):
         self.handlemessage(ExplodeMessage())
 
 
+def bomb_handle_dropped(self):
+    if self.bomb_type == 'land_mine':
+        self.arm_timer = \
+            ba.Timer(1.25, ba.WeakCall(self.handlemessage, ArmMessage()))
+    elif self.bomb_type == 'elon_mine':
+        self.arm_timer = \
+            ba.Timer(0.5, ba.WeakCall(self.handlemessage, ArmMessage()))
+    elif self.bomb_type == 'sticky_gift':
+        self.arm_timer = \
+            ba.Timer(0.25, ba.WeakCall(self.handlemessage, ArmMessage()))
+
+    # once we've thrown a sticky bomb we can stick to it..
+    elif self.bomb_type == 'sticky':
+
+        def _safesetattr(node, attr: str,
+                         value) -> None:
+            if node:
+                setattr(node, attr, value)
+
+        ba.timer(0.25,
+                 lambda: _safesetattr(self.node, 'stick_to_owner', True))
+
+
+def bomb_explode(self):
+    if self._exploded:
+        return
+    self._exploded = True
+    activity = self.getactivity()
+
+    if (self.bomb_type not in ('health', 'portal', 'airstrike') and
+            activity is not None and
+            self.node.exists()):
+        blast = stdbomb.Blast(
+            position=self.node.position,
+            velocity=self.node.velocity,
+            blast_radius=self.blast_radius,
+            blast_type=self.bomb_type,
+            source_player=self.source_player,
+            hit_type=self.hit_type,
+            hit_subtype=self.hit_subtype).autoretain()
+        for callback in self._explode_callbacks:
+            callback(self, blast)
+
+    elif self.bomb_type == 'health':
+        ba.emitfx(
+            position=self.node.position,
+            velocity=(0, 0, 0),
+            count=75,
+            spread=0.7,
+            chunk_type='spark')
+
+        TreatmentArea(position=self.node.position)
+        ba.playsound(ba.getsound('healthPowerup'))  # position=?
+
+    elif self.bomb_type == 'portal':
+        ba.emitfx(
+            position=self.node.position,
+            velocity=(0, 0, 0),
+            count=75,
+            spread=0.7,
+            chunk_type='spark')
+
+        portals = Portals(
+            color=(random.random() * 2,
+                   random.random() * 2,
+                   random.random() * 2),
+            first_position=self.node.position,
+            second_position=self.owner.position)
+
+        ba.playsound(ba.getsound('laserReverse'))  # position=self.node.position?
+
+    elif self.bomb_type == 'airstrike':
+        ba.emitfx(
+            position=self.node.position,
+            velocity=(0, 0, 0),
+            count=75,
+            spread=0.7,
+            chunk_type='spark')
+
+        Airstrike(position=self.node.position)
+        ba.playsound(ba.getsound('laserReverse'))  # position=self.node.position?
+
+    # we blew up so we need to go away
+    # FIXME; was there a reason we need this delay?
+    ba.timer(0.001, ba.WeakCall(self.handlemessage, ba.DieMessage()))
+
+
+def bomb_arm(self):
+    if not self.node:
+        return
+    factory = get_factory()
+    intex: tuple
+    if self.bomb_type == 'land_mine':
+        intex = (factory.land_mine_lit_tex, factory.land_mine_tex)
+        self.texture_sequence = ba.newnode('texture_sequence',
+                                           owner=self.node,
+                                           attrs={
+                                               'rate': 30,
+                                               'input_textures': intex
+                                           })
+        ba.timer(0.5, self.texture_sequence.delete)
+        # We now make it explodable.
+        ba.timer(
+            0.25,
+            ba.WeakCall(self._add_material,
+                        factory.land_mine_blast_material))
+    elif self.bomb_type == 'impact':
+        intex = (factory.impact_lit_tex, factory.impact_tex,
+                 factory.impact_tex)
+        self.texture_sequence = ba.newnode('texture_sequence',
+                                           owner=self.node,
+                                           attrs={
+                                               'rate': 100,
+                                               'input_textures': intex
+                                           })
+        ba.timer(
+            0.25,
+            ba.WeakCall(self._add_material,
+                        factory.land_mine_blast_material))
+
+    elif self.bomb_type == 'elon_mine':
+        self.texture_sequence = ba.newnode(
+            'texture_sequence', owner=self.node, attrs={
+                'rate': 30,
+                'input_textures': (factory.elon_mine_lit_tex,
+                                   factory.elon_mine_tex)})
+        ba.timer(0.5, self.texture_sequence.delete)
+        ba.playsound(ba.getsound('activateBeep'),
+                     position=self.node.position)
+
+        self.aim = AutoAim(self.node, self.owner)
+        # we now make it explodable.
+        ba.timer(0.25, ba.WeakCall(self._add_material,
+                                   factory.land_mine_blast_material))
+    elif self.bomb_type == 'sticky_gift':
+        ba.playsound(ba.getsound('activateBeep'),
+                     position=self.node.position)
+
+        self.aim = AutoAim(self.node, self.owner)
+
+    else:
+        raise Exception('arm() should only be called '
+                        'on impact-like bombs or mines')
+
+    if self.bomb_type != 'sticky_gift':
+        self.texture_sequence.connectattr('output_texture',
+                                          self.node, 'color_texture')
+        ba.playsound(factory.activate_sound, 0.5, position=self.node.position)
+
+
 def _decorator_factory(f):
     def func(self, *args, **kwargs):
         f(self, *args, **kwargs)
@@ -384,7 +537,60 @@ def _decorator_factory(f):
     return func
 
 
+def bomb_handlemessage(self, msg):
+    if isinstance(msg, ExplodeMessage):
+        self.explode()
+    elif isinstance(msg, ImpactMessage):
+        self._handle_impact()
+    elif isinstance(msg, SetStickyMessage):
+        node = ba.get_collision_info('opposing_node')
+        self._handle_sticky_gift(msg, node)
+    elif isinstance(msg, ba.PickedUpMessage):
+        # change our source to whoever just picked us up *only* if its None
+        # this way we can get points for killing bots with their own bombs
+        # hmm would there be a downside to this?...
+        if self.source_player is not None:
+            self.source_player = msg.node.source_player
+    elif isinstance(msg, SplatMessage):
+        self._handle_splat()
+    elif isinstance(msg, ba.DroppedMessage):
+        self._handle_dropped()
+    elif isinstance(msg, ba.HitMessage):
+        self._handle_hit(msg)
+    elif isinstance(msg, ba.DieMessage):
+        self._handle_die()
+    elif isinstance(msg, ba.OutOfBoundsMessage):
+        self._handle_oob()
+    elif isinstance(msg, ArmMessage):
+        self.arm()
+    elif isinstance(msg, WarnMessage):
+        self._handle_warn()
+    else:
+        ba.Actor.handlemessage(self, msg)
+
+
+def bomb_handle_sticky_gift(self, m, node):
+    if (self.node.exists() and
+            node is not None and
+            node is not self.owner and
+            ba.sharedobj('player_material') in node.materials):
+        self.node.sticky = True
+
+        def wrapper():
+            if self.node is not None and self.node.exists():
+                self.node.extraAcceleration = (0, 80, 0)
+
+            if self.aim is not None:
+                self.aim.off()
+
+        ba.timer(0.001, wrapper)
+
+
 stdbomb.BombFactory.__init__ = _decorator_factory(stdbomb.BombFactory.__init__)
 stdbomb.Bomb.__init__ = _bomb_init
 stdbomb.Bomb._handle_impact = bomb_handle_impact
-
+stdbomb.Bomb._handle_dropped = bomb_handle_dropped
+stdbomb.Bomb.explode = bomb_explode
+stdbomb.Bomb.arm = bomb_arm
+stdbomb.Bomb._handle_sticky_gift = bomb_handle_sticky_gift
+stdbomb.Bomb.handlemessage = bomb_handlemessage

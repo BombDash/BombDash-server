@@ -7,8 +7,9 @@ from typing import Sequence, Tuple
 
 def get_powerup_distribution() -> Sequence[Tuple[str, int]]:
     """Set of BombDash server powerups."""
-    return (('lucky_block', 3), ('speed', 2), ('jump_boost', 2), ('companion_cube', 2), ('sticky_gift_bombs', 2),
-            ('portal_bombs', 2), ('elon_mines', 2), ('airstrike_bombs', 2), ('health_bombs', 1), ('holy_bombs', 1))
+    return (('lucky_block', 3), ('speed', 2), ('jump_boost', 2), ('companion_cube', 2), ('sticky_gift_bombs', 200),
+            ('portal_bombs', 2), ('elon_mines', 200), ('airstrike_bombs', 2), ('health_bombs', 1), ('holy_bombs', 1))
+# TODO: remove
 
 
 def _decorator(f):
