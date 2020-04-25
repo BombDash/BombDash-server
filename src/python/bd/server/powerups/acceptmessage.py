@@ -179,10 +179,10 @@ def _decorator(f):
 
                 self.set_portal_bomb_count(self.portal_bomb_count + 1)
 
-            elif msg.poweruptype == 'sticky_gift_bomb':
+            elif msg.poweruptype == 'sticky_gift_bombs':
                 if ba.app.config.get('Powerup Popups', True):
                     powerup_text = get_locale(
-                        'powerup_names')['sticky_gift']
+                        'powerup_names')['sticky_gift_bombs']
 
                     PopupText(
                         ba.Lstr(translate=('gameDescriptions', powerup_text)),
@@ -192,10 +192,10 @@ def _decorator(f):
 
                 self.set_sticky_gift_bomb_count(self.sticky_gift_bomb_count + 1)
 
-            elif msg.poweruptype == 'heal_bombs':
+            elif msg.poweruptype == 'health_bombs':
                 if ba.app.config.get('Powerup Popups', True):
                     powerup_text = get_locale(
-                        'powerup_names')['heal_bombs']
+                        'powerup_names')['health_bombs']
 
                     PopupText(
                         ba.Lstr(translate=('gameDescriptions', powerup_text)),
