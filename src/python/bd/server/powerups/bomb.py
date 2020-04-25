@@ -5,7 +5,7 @@ import random
 import ba
 import bastd.actor.bomb as stdbomb
 from bastd.actor.bomb import ExplodeMessage, get_factory, WarnMessage, ArmMessage, ImpactMessage, SplatMessage
-from bd.server.actor import Portals, AutoAim  # , TreatmentArea, Airstrike
+from bd.server.actor import Portals, AutoAim, Airstrike # , TreatmentArea
 
 
 class SetStickyMessage:
