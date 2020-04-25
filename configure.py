@@ -14,16 +14,17 @@ def run(cmd, capture_stdout=False, show=True):
     os.system(cmd)
 
 
-def build(build_type):
+def build(build_type, only_copy=False):
     run(f'mkdir -p build')
     os.chdir('build')
-    if not os.path.exists('ballistica'):
-        run('git clone "https://github.com/efroemling/ballistica"')
-    else:
-        run('cd ballistica && git pull')
-    run(f'cd ballistica && make prefab-server-{build_type}-build')
-    run(f'rm -rf {build_type}')
-    run(f'cp -r ballistica/build/prefab/linux-server/{build_type}/ .')
+    if not only_copy:
+        if not os.path.exists('ballistica'):
+            run('git clone "https://github.com/efroemling/ballistica"')
+        else:
+            run('cd ballistica && git pull')
+        run(f'cd ballistica && make prefab-server-{build_type}-build')
+        run(f'rm -rf {build_type}')
+        run(f'cp -r ballistica/build/prefab/linux-server/{build_type}/ .')
     run(f'cp -r ../src/* {build_type}/dist/ba_data/')
     os.chdir('..')
 
@@ -43,3 +44,5 @@ elif sys.argv[1] == 'build-release':
     build('release')
 elif sys.argv[1] == 'run-debug':
     run("cd build/debug && ./ballisticacore_server")
+elif sys.argv[1] == 'copy-files-debug':
+    build('debug', only_copy=True)
