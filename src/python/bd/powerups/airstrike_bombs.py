@@ -10,6 +10,6 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-@powerup('airstrike_bombs', 'тут должна быть текстура')
+@powerup('airstrike_bombs', texture='menuIcon', freq=1000)
 def airstrike_bombs_callback(msg: ba.PowerupMessage) -> None:
     print('powerup accepted')
