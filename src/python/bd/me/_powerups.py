@@ -33,8 +33,7 @@ class Spaz(ba.Actor):
 
     @redefine_flag(RedefineFlag.DECORATE_AFTER)
     def handlemessage(self, msg: Any, returned: Any = None) -> Any:
-        super().handlemessage(msg)
-        Spaz.handlemessage(self, msg)
+        super(stdspaz.Spaz, self).handlemessage(msg)
         if isinstance(msg, ba.PowerupMessage):
             for poweruptype, texture, callback in _callbacks:
                 if msg.poweruptype == poweruptype:
