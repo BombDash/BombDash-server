@@ -1,13 +1,13 @@
 # Copyright (c) 2020 BombDash
+from __future__ import annotations
 
 from typing import TYPE_CHECKING
-# TYPE_CHECKING = True
 
+from types import FunctionType
 import enum
 
 if TYPE_CHECKING:
     from typing import Type, Callable, Any, Tuple
-    from types import FunctionType
 
 
 def redefine_method(dst: Tuple[Any, str], src: Tuple[Any, str]) -> None:
@@ -15,7 +15,7 @@ def redefine_method(dst: Tuple[Any, str], src: Tuple[Any, str]) -> None:
             RedefineFlag.DECORATE_PRE, RedefineFlag.DECORATE_AFTER):
         new = getattr(*src)
         old = getattr(*dst)
-        func: FunctionType
+        func: Callable
         if getattr(*src).__redefine_type == RedefineFlag.DECORATE_AFTER:
             def func(*args, **kwargs):
                 returned = old(*args, **kwargs)
@@ -56,7 +56,8 @@ def redefine_class_methods(orig_cls: Type[object]) -> Callable[[Any], None]:
          orig_cls (Type[object]): class that will redefined"""
 
     def decorator(cls) -> None:
-        for method in filter(lambda x: isinstance(getattr(cls, x), FunctionType), dir(cls)):
+        # for method in filter(lambda x: isinstance(getattr(cls, x), FunctionType), dir(cls)):
+        for method in cls.__redefine_methods:
             if hasattr(orig_cls, method):
                 redefine_method((orig_cls, method), (cls, method))
             else:
@@ -83,46 +84,42 @@ def redefine_flag(*flags: RedefineFlag) -> Callable[[Callable], Callable]:
     return decorator
 
 
-if __name__ == '__main__':  # Simple testing
-    class Base:
-        def a(self):
-            print('base a')
-
-        def c(self):
-            print('method c')
-
-
-    class Egg(Base):
-        def a(self):
-            super().a()
-            print('hello!')
-
-        def b(self, name):
-            print(f'hello {name}!')
-            return 123
-
-        def d(self):
-            print('just d')
-
-
-    egg = Egg()
-
-
-    @redefine_class_methods(Egg)
-    class RedefineEgg(Base):
-        def a(self):
-            Base.a(self)
-            print('bye!')
-
-        @redefine_flag(RedefineFlag.DECORATE_AFTER)
-        def b(self, name, returned=None):
-            print(f'bye, {name}! {returned=}')
-
-        def c(self):
-            print('redefined c')
-
-
-    egg.a()
-    egg.b('roma')
-    egg.c()
-    egg.d()
+# if __name__ == '__main__':  # Simple testing
+#     class Base:
+#         def a(self):
+#             print('base a')
+#
+#         def c(self):
+#             print('method c')
+#
+#     class Egg(Base):
+#         def a(self):
+#             super().a()
+#             print('hello!')
+#
+#         def b(self, name):
+#             print(f'hello {name}!')
+#             return 123
+#
+#         def d(self):
+#             print('just d')
+#
+#     egg = Egg()
+#
+#     @redefine_class_methods(Egg)
+#     class RedefineEgg(Base):
+#         def a(self):
+#             Base.a(self)
+#             print('bye!')
+#
+#         @redefine_flag(RedefineFlag.DECORATE_AFTER)
+#         def b(self, name, returned=None):
+#             print(f'bye, {name}! {returned=}')
+#
+#         def c(self):
+#             print('redefined c')
+#
+#     egg.a()
+#     egg.b('roma')
+#     egg.c()
+#     egg.d()
