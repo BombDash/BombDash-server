@@ -57,7 +57,7 @@ def redefine_class_methods(orig_cls: Type[object]) -> Callable[[Any], None]:
 
     def decorator(cls) -> None:
         # for method in filter(lambda x: isinstance(getattr(cls, x), FunctionType), dir(cls)):
-        for method in cls.__redefine_methods:
+        for method in cls._redefine_methods:
             if hasattr(orig_cls, method):
                 redefine_method((orig_cls, method), (cls, method))
             else:
@@ -83,7 +83,6 @@ def redefine_flag(*flags: RedefineFlag) -> Callable[[Callable], Callable]:
 
     return decorator
 
-
 # if __name__ == '__main__':  # Simple testing
 #     class Base:
 #         def a(self):
@@ -108,6 +107,8 @@ def redefine_flag(*flags: RedefineFlag) -> Callable[[Callable], Callable]:
 #
 #     @redefine_class_methods(Egg)
 #     class RedefineEgg(Base):
+#         _redefine_methods = ('a', 'b', 'c')
+#
 #         def a(self):
 #             Base.a(self)
 #             print('bye!')
