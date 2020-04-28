@@ -11,11 +11,11 @@ if TYPE_CHECKING:
     from typing import Callable, Any, List, Tuple
 
 
-callbacks: List[Tuple[str, Callable]] = []
+_callbacks: List[Tuple[str, Callable]] = []
 
 
 def add_powerup(poweruptype: str, callback: Callable[[ba.PowerupMessage], None]) -> None:
-    callbacks.append((poweruptype, callback))
+    _callbacks.append((poweruptype, callback))
 
 
 @redefine_class_methods(stdspaz.Spaz)
@@ -25,6 +25,6 @@ class Spaz(ba.Actor):
         super().handlemessage(msg)
         Spaz.handlemessage(self, msg)
         if isinstance(msg, ba.PowerupMessage):
-            for poweruptype, callback in callbacks:
+            for poweruptype, callback in _callbacks:
                 if msg.poweruptype == poweruptype:
                     callback(msg)
