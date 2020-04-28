@@ -29,6 +29,8 @@ def powerup(poweruptype: str, texture: Any) -> Callable[[Callable], Callable]:
 
 @redefine_class_methods(stdspaz.Spaz)
 class Spaz(ba.Actor):
+    __redefine_methods = ('handlemessage',)
+    
     @redefine_flag(RedefineFlag.DECORATE_AFTER)
     def handlemessage(self, msg: Any, returned: Any = None) -> Any:
         super().handlemessage(msg)
