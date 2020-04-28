@@ -11,11 +11,6 @@ if TYPE_CHECKING:
     pass
 
 
-@powerup('airstrike_bombs', texture='menuIcon', freq=0)
-def airstrike_bombs_callback(msg: ba.PowerupMessage) -> None:
-    print('airstrike powerup accepted')
-
-
 @powerup('speed', texture='powerupSpeed', freq=1)
 def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
     # if ba.app.config.get('Powerup Popups', True):
