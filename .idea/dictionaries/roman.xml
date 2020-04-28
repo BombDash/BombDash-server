@@ -13,6 +13,7 @@
       <w>powerupbox</w>
       <w>powerupdist</w>
       <w>powerups</w>
+      <w>poweruptextures</w>
       <w>poweruptype</w>
       <w>profilename</w>
       <w>profilenames</w>
@@ -20,6 +21,7 @@
       <w>pylint</w>
       <w>spaz</w>
       <w>stdbomb</w>
+      <w>stdspaz</w>
       <w>teleported</w>
       <w>vpos</w>
     </words>
