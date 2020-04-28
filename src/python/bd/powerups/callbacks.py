@@ -17,7 +17,7 @@ def airstrike_bombs_callback(msg: ba.PowerupMessage) -> None:
 
 
 @powerup('speed', texture='powerupSpeed', freq=1)
-def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
+def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
     # if ba.app.config.get('Powerup Popups', True):
     #     powerup_text = get_locale(
     #         'powerup_names')['speed']
@@ -47,8 +47,8 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
 
 
 # FIXME: add cooldown or check what spaz is on ground
-@powerup('high_jump', texture='buttonJump', freq=100)
-def high_jump_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
+@powerup('high_jump', texture='buttonJump', freq=1)
+def high_jump_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
     # if ba.app.config.get('Powerup Popups', True):
     #     powerup_text = get_locale(
     #         'powerup_names')['jump_boost']
