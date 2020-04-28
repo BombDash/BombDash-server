@@ -46,3 +46,8 @@ elif sys.argv[1] == 'run-debug':
     run("cd build/debug && ./ballisticacore_server")
 elif sys.argv[1] == 'copy-files-debug':
     build('debug', only_copy=True)
+elif sys.argv[1] == 'copy-files-release':
+    build('release', only_copy=True)
+else:
+    print('What?')
+    exit(-1)
