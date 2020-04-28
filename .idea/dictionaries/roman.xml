@@ -4,15 +4,24 @@
       <w>airstrike</w>
       <w>bastd</w>
       <w>cooldown</w>
+      <w>deek</w>
       <w>elon</w>
+      <w>errorsound</w>
       <w>handlemessage</w>
+      <w>hmmm</w>
       <w>powerup</w>
       <w>powerupbox</w>
       <w>powerupdist</w>
       <w>powerups</w>
+      <w>poweruptype</w>
+      <w>profilename</w>
+      <w>profilenames</w>
+      <w>punchsound</w>
+      <w>pylint</w>
       <w>spaz</w>
       <w>stdbomb</w>
       <w>teleported</w>
+      <w>vpos</w>
     </words>
   </dictionary>
 </component>
