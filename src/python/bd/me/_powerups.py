@@ -44,7 +44,7 @@ class Spaz(ba.Actor):
         if isinstance(msg, ba.PowerupMessage):
             for poweruptype, texture, callback in _callbacks:
                 if msg.poweruptype == poweruptype:
-                    callback(msg)
+                    callback(self, msg)
 
 
 @redefine_class_methods(powerupbox.PowerupBoxFactory)
