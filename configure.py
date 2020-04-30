@@ -3,7 +3,6 @@
 
 import sys
 import os
-import distutils.dir_util
 
 
 def run(cmd, capture_stdout=False, show=True):
@@ -48,6 +47,8 @@ elif sys.argv[1] == 'copy-files-debug':
     build('debug', only_copy=True)
 elif sys.argv[1] == 'copy-files-release':
     build('release', only_copy=True)
+elif sys.argv[1] == 'mypy':
+    run('python3.7 -m mypy --config-file config/mypy.ini src/python/')
 else:
     print('What?')
     exit(-1)

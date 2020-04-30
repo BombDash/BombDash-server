@@ -4,7 +4,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import ba
-import _ba
 import bastd.actor.spaz as stdspaz
 from bastd.actor import powerupbox
 from bastd.actor.powerupbox import get_factory, DEFAULT_POWERUP_INTERVAL
