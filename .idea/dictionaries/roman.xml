@@ -2,7 +2,9 @@
   <dictionary name="roman">
     <words>
       <w>airstrike</w>
+      <w>astroid</w>
       <w>autoretain</w>
+      <w>ballistica</w>
       <w>bastd</w>
       <w>cooldown</w>
       <w>deek</w>
@@ -10,6 +12,8 @@
       <w>errorsound</w>
       <w>handlemessage</w>
       <w>hmmm</w>
+      <w>mapdata</w>
+      <w>mypy</w>
       <w>powerup</w>
       <w>powerupbox</w>
       <w>powerupdist</w>
@@ -20,6 +24,8 @@
       <w>profilenames</w>
       <w>punchsound</w>
       <w>pylint</w>
+      <w>pytest</w>
+      <w>pythonpath</w>
       <w>spaz</w>
       <w>stdbomb</w>
       <w>stdspaz</w>
