@@ -98,3 +98,8 @@ def high_jump_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
         t = ba.time()
         self.node.mini_billboard_2_start_time = t
         self.node.mini_billboard_2_end_time = t + powerup_expiration_time
+
+
+@powerup('heal_bombs', 'heart', freq=10000, bomb_type='heal')
+def health_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
+    self.inc_bomb_count('heal')

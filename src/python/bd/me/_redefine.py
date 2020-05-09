@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 def redefine_method(dst: Tuple[Any, str], src: Tuple[Any, str]) -> None:
     if hasattr(getattr(*src), '__redefine_type') and getattr(*src).__redefine_type in (
-            RedefineFlag.DECORATE_PRE, RedefineFlag.DECORATE_AFTER):
+            RedefineFlag.DECORATE_PRE, RedefineFlag.DECORATE_AFTER, RedefineFlag.DECORATE_ADVANCED):
         new = getattr(*src)
         old = getattr(*dst)
         func: Callable
@@ -20,10 +20,13 @@ def redefine_method(dst: Tuple[Any, str], src: Tuple[Any, str]) -> None:
             def func(*args, **kwargs):
                 returned = old(*args, **kwargs)
                 return new(*args, **kwargs, returned=returned)
+        elif getattr(*src).__redefine_type == RedefineFlag.DECORATE_PRE:
+            def func(*args, **kwargs):
+                new(*args, **kwargs)
+                return old(*args, **kwargs)
         else:
             def func(*args, **kwargs):
-                returned = new(*args, **kwargs)
-                return old(*args, **kwargs)
+                return new(*args, **kwargs, old_function=old)
 
         setattr(*dst, func)
     else:
@@ -69,15 +72,17 @@ def redefine_class_methods(orig_cls: Type[object]) -> Callable[[Any], None]:
 
 class RedefineFlag(enum.Enum):
     REDEFINE = 0
-    DECORATE = 1
-    DECORATE_AFTER = DECORATE
+    DECORATE_AFTER = 1
     DECORATE_PRE = 2
+    DECORATE_ADVANCED = 3
+    DECORATE = DECORATE_AFTER
 
 
 def redefine_flag(*flags: RedefineFlag) -> Callable[[Callable], Callable]:
     def decorator(func: Callable) -> Callable:
         for flag in flags:
-            if flag in (RedefineFlag.DECORATE_AFTER, RedefineFlag.REDEFINE, RedefineFlag.DECORATE_PRE):
+            if flag in (RedefineFlag.DECORATE_AFTER, RedefineFlag.REDEFINE, RedefineFlag.DECORATE_PRE,
+                        RedefineFlag.DECORATE_ADVANCED):
                 func.__redefine_type = flag
         return func
 

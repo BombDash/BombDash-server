@@ -5,29 +5,34 @@ from typing import TYPE_CHECKING
 
 import ba
 import bastd.actor.spaz as stdspaz
+import bastd.actor.bomb as stdbomb
 from bastd.actor import powerupbox
 from bastd.actor.powerupbox import get_factory, DEFAULT_POWERUP_INTERVAL
 
 from ._redefine import redefine_class_methods, redefine_flag, RedefineFlag
 
 if TYPE_CHECKING:
-    from typing import Callable, Any, List, Tuple, Sequence, Dict
-
+    from typing import Callable, Any, List, Tuple, Sequence, Dict, Optional
 
 _callbacks: List[Tuple[str, Any, Callable]] = []
 _powerupdist: List[Tuple[str, int]] = []
 _poweruptextures: Dict[str, str] = {}
+_bombtextures: Dict[str, str] = {}
 
 
-def add_powerup(poweruptype: str, callback: Callable[[ba.PowerupMessage], None], texture: str, freq: int) -> None:
+def add_powerup(poweruptype: str, callback: Callable[[ba.PowerupMessage], None],
+                texture: str, freq: int, bomb_type: Optional[str] = None) -> None:
     _callbacks.append((poweruptype, texture, callback))
     _powerupdist.append((poweruptype, freq))
     _poweruptextures[poweruptype] = texture
+    if bomb_type is not None:
+        _bombtextures[bomb_type] = texture
 
 
-def powerup(poweruptype: str, texture: str, freq: int) -> Callable[[Callable], Callable]:
+def powerup(poweruptype: str, texture: str, freq: int,
+            bomb_type: Optional[str] = None) -> Callable[[Callable], Callable]:
     def decorator(func: Callable) -> Callable:
-        add_powerup(poweruptype, func, texture, freq)
+        add_powerup(poweruptype, func, texture, freq, bomb_type)
         return func
 
     return decorator
@@ -35,7 +40,8 @@ def powerup(poweruptype: str, texture: str, freq: int) -> Callable[[Callable], C
 
 @redefine_class_methods(stdspaz.Spaz)
 class Spaz(ba.Actor):
-    _redefine_methods = ('handlemessage',)
+    _redefine_methods = ('handlemessage', 'inc_bomb_count',
+                         'dec_bomb_count', 'drop_bomb', 'init_bomb_count')
 
     @redefine_flag(RedefineFlag.DECORATE_AFTER)
     def handlemessage(self, msg: Any, returned: Any = None) -> Any:
@@ -44,6 +50,87 @@ class Spaz(ba.Actor):
             for poweruptype, texture, callback in _callbacks:
                 if msg.poweruptype == poweruptype:
                     callback(self, msg)
+
+    @redefine_flag(RedefineFlag.REDEFINE)
+    def inc_bomb_count(self, bomb_type):
+        if not hasattr(self, 'exbomb_count'):
+            self.exbomb_count = {}
+        count = self.exbomb_count.get(bomb_type, 0) + 1
+        self.exbomb_count[bomb_type] = count if count > 0 else 0
+        if self.exbomb_count[bomb_type] != 0:
+            self.node.counter_text = 'x' + str(self.exbomb_count[bomb_type])
+            self.node.counter_texture = ba.gettexture(_bombtextures[bomb_type])
+        else:
+            self.node.counter_text = ''
+
+    def init_bomb_count(self):  # FIXME redefine init or add automated init
+        if not hasattr(self, 'exbomb_count'):
+            self.exbomb_count = {}
+
+    @redefine_flag(RedefineFlag.REDEFINE)
+    def dec_bomb_count(self, bomb_type):
+        if not hasattr(self, 'exbomb_count'):
+            self.exbomb_count = {}
+        count = self.exbomb_count.get(bomb_type, 0) - 1
+        self.exbomb_count[bomb_type] = count if count > 0 else 0
+        if self.exbomb_count[bomb_type] != 0:  # TODO: cleanup this
+            self.node.counter_text = 'x' + str(self.exbomb_count[bomb_type])
+            self.node.counter_texture = ba.gettexture(_bombtextures[bomb_type])
+        else:
+            self.node.counter_text = ''
+
+    @redefine_flag(RedefineFlag.REDEFINE)
+    def drop_bomb(self):
+        """
+        Tell the spaz to drop one of his bombs, and returns
+        the resulting bomb object.
+        If the spaz has no bombs or is otherwise unable to
+        drop a bomb, returns None.
+        """
+
+        if (self.land_mine_count <= 0 and self.bomb_count <= 0 and not any(
+                self.exbomb_count.values())) or self.frozen:
+            return None
+        assert self.node
+        pos = self.node.position_forward
+        vel = self.node.velocity
+        bomb_type: str
+        dropping_bomb: bool
+
+        if self.land_mine_count > 0:
+            dropping_bomb = False
+            self.set_land_mine_count(self.land_mine_count - 1)
+            bomb_type = 'land_mine'
+        else:
+            self.init_bomb_count()
+            for exbomb_type in self.exbomb_count:
+                if self.exbomb_count[exbomb_type] > 0:
+                    self.dec_bomb_count(exbomb_type)
+                    bomb_type = exbomb_type
+                    dropping_bomb = False
+                    break
+            else:
+                dropping_bomb = True
+                bomb_type = self.bomb_type
+
+        bomb = stdbomb.Bomb(position=(pos[0], pos[1] - 0.0, pos[2]),
+                            velocity=(vel[0], vel[1], vel[2]),
+                            bomb_type=bomb_type,
+                            blast_radius=self.blast_radius,
+                            source_player=self.source_player,
+                            owner=self.node).autoretain()
+
+        assert bomb.node
+        if dropping_bomb:
+            self.bomb_count -= 1
+            bomb.node.add_death_action(
+                ba.WeakCall(self.handlemessage, stdspaz.BombDiedMessage()))
+        self._pick_up(bomb.node)
+
+        for clb in self._dropped_bomb_callbacks:
+            clb(self, bomb)
+
+        return bomb
 
 
 @redefine_class_methods(powerupbox.PowerupBoxFactory)
