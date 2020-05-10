@@ -10,9 +10,10 @@ from bastd.actor.bomb import get_factory, ExplodeMessage
 from ._redefine import redefine_class_methods, redefine_flag, RedefineFlag
 
 if TYPE_CHECKING:
-    from typing import Callable, List, Type, Optional
+    from typing import Callable, List, Type, Optional, Dict, Sequence
 
 _bombs: List[MeBomb] = []
+_blasts: Dict[str, Callable] = {}
 
 
 def add_bomb(mebomb: MeBomb):
@@ -29,6 +30,19 @@ def bomb(bomb_type: str, arm_time: float = None, fuse_time: float = None,
     return decorator
 
 
+def add_blast(blast_type: str, callback: Callable):
+    print('adding blast', blast_type)
+    _blasts[blast_type] = callback
+
+
+def blast(blast_type: str):
+    def decorator(function: Callable):
+        nonlocal blast_type
+        add_blast(blast_type, function)
+
+    return decorator
+
+
 class MeBomb:
     """Class that defines actions and types of bomb
 
@@ -38,6 +52,7 @@ class MeBomb:
         on_impact(self, actor) - handle impact
         on_drop(self, actor) - handle dropped
     """
+
     def __init__(self, bomb_type: str, arm_time: float = None, fuse_time: float = None,
                  blast_coefficient: float = 1, sticky: bool = False, impact: bool = False,
                  is_mine: bool = False):
@@ -176,12 +191,10 @@ class Bomb(ba.Actor):
             return
         factory = get_factory()
         mebomb: Optional[MeBomb] = get_mebomb(self.bomb_type)
-        try:
+        if mebomb is None:
             old_function(self)
-        except AttributeError:
-            pass
-        else:
-            mebomb.on_impact(self)
+            return
+        mebomb.on_impact(self)
         self.texture_sequence.connectattr('output_texture', self.node,
                                           'color_texture')
         ba.playsound(factory.activate_sound, 0.5, position=self.node.position)
@@ -249,3 +262,97 @@ class Bomb(ba.Actor):
                       and node_delegate.owner is self.owner))):
                 return
             self.handlemessage(ExplodeMessage())
+
+
+@redefine_class_methods(stdbomb.Blast)
+class Blast(ba.Actor):
+    _redefine_methods = ('__init__',)
+
+    @redefine_flag(RedefineFlag.DECORATE_ADVANCED)
+    def __init__(self, old_function: Callable,
+                 position: Sequence[float] = (0.0, 1.0, 0.0),
+                 velocity: Sequence[float] = (0.0, 0.0, 0.0),
+                 blast_radius: float = 2.0,
+                 blast_type: str = 'normal',
+                 source_player: ba.Player = None,
+                 hit_type: str = 'explosion',
+                 hit_subtype: str = 'normal'):
+        meblast = _blasts.get(blast_type)
+        if meblast is None:
+            old_function(self, position=position, velocity=velocity, blast_radius=blast_radius,
+                         blast_type=blast_type, source_player=source_player, hit_type=hit_type,
+                         hit_subtype=hit_subtype)
+            return
+        """Instantiate with given values."""
+
+        # bah; get off my lawn!
+        # pylint: disable=too-many-locals
+        # pylint: disable=too-many-statements
+
+        ba.Actor.__init__(self)
+
+        factory = get_factory()
+
+        self.blast_type = blast_type
+        self.source_player = source_player
+        self.hit_type = hit_type
+        self.hit_subtype = hit_subtype
+        self.radius = blast_radius
+
+        # Do we need to light?
+        # lcolor = ((0.6, 0.6, 1.0) if self.blast_type == 'ice' else
+        #           (1, 0.3, 0.1))
+        # light = ba.newnode('light',
+        #                    attrs={
+        #                        'position': position,
+        #                        'volume_intensity_scale': 10.0,
+        #                        'color': lcolor
+        #                    })
+
+        # scl = random.uniform(0.6, 0.9)
+        # scorch_radius = light_radius = self.radius
+        # if self.blast_type == 'tnt':
+        #     light_radius *= 1.4
+        #     scorch_radius *= 1.15
+        #     scl *= 3.0
+        #
+        # iscale = 1.6
+        # ba.animate(
+        #     light, 'intensity', {
+        #         0: 2.0 * iscale,
+        #         scl * 0.02: 0.1 * iscale,
+        #         scl * 0.025: 0.2 * iscale,
+        #         scl * 0.05: 17.0 * iscale,
+        #         scl * 0.06: 5.0 * iscale,
+        #         scl * 0.08: 4.0 * iscale,
+        #         scl * 0.2: 0.6 * iscale,
+        #         scl * 2.0: 0.00 * iscale,
+        #         scl * 3.0: 0.0
+        #     })
+        # ba.animate(
+        #     light, 'radius', {
+        #         0: light_radius * 0.2,
+        #         scl * 0.05: light_radius * 0.55,
+        #         scl * 0.1: light_radius * 0.3,
+        #         scl * 0.3: light_radius * 0.15,
+        #         scl * 1.0: light_radius * 0.05
+        #     })
+        # ba.timer(scl * 3.0, light.delete)
+
+        # make a scorch that fades over time
+
+        # if self.blast_type == 'ice':
+        #     ba.playsound(factory.hiss_sound, position=light.position)
+
+        # lpos = light.position
+        # ba.playsound(factory.random_explode_sound(), position=lpos)
+        # ba.playsound(factory.debris_fall_sound, position=lpos)
+
+        ba.camerashake(intensity=5.0 if self.blast_type == 'tnt' else 1.0)
+
+        _blasts[blast_type](self,
+                            position=position,
+                            velocity=velocity,
+                            blast_radius=blast_radius,
+                            hit_type=hit_type,
+                            hit_subtype=hit_subtype)
