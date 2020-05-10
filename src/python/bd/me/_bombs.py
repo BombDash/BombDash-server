@@ -193,7 +193,7 @@ class Bomb(ba.Actor):
         if mebomb is None:
             old_function(self)
             return
-        mebomb.on_impact(self)
+        mebomb.arm(self)
         self.texture_sequence.connectattr('output_texture', self.node,
                                           'color_texture')
         ba.playsound(factory.activate_sound, 0.5, position=self.node.position)
@@ -247,6 +247,7 @@ class Bomb(ba.Actor):
         if mebomb is None:
             old_function(self)
             return
+        mebomb.on_impact(self)
         node = ba.get_collision_info('opposing_node')
         # if we're an impact bomb and we came from this node, don't explode...
         # alternately if we're hitting another impact-bomb from the same
