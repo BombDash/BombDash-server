@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 import ba
 from bastd.actor import spaz as stdspaz
 from bd.me import powerup
+from bd.actor import CompanionCube
 
 if TYPE_CHECKING:
     pass
@@ -103,3 +104,12 @@ def high_jump_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
 @powerup('heal_bombs', 'heart', freq=2, bomb_type='heal')
 def health_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     self.inc_bomb_count('heal')
+
+
+@powerup('companion_cube', 'landMineLit', freq=2)
+def companion_cube_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
+    CompanionCube(
+        position=(self.node.position[0],
+                  self.node.position[1] + 1,
+                  self.node.position[2]),
+        velocity=(0, 10, 0)).autoretain()
