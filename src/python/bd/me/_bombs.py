@@ -31,7 +31,6 @@ def bomb(bomb_type: str, arm_time: float = None, fuse_time: float = None,
 
 
 def add_blast(blast_type: str, callback: Callable):
-    print('adding blast', blast_type)
     _blasts[blast_type] = callback
 
 
@@ -242,9 +241,12 @@ class Bomb(ba.Actor):
             return old_function(self)
         mebomb.on_drop(self)
 
-    @redefine_flag(RedefineFlag.REDEFINE)
-    def _handle_impact(self):
+    @redefine_flag(RedefineFlag.DECORATE_ADVANCED)
+    def _handle_impact(self, old_function):
         mebomb = get_mebomb(self.bomb_type)
+        if mebomb is None:
+            old_function(self)
+            return
         node = ba.get_collision_info('opposing_node')
         # if we're an impact bomb and we came from this node, don't explode...
         # alternately if we're hitting another impact-bomb from the same
@@ -254,7 +256,7 @@ class Bomb(ba.Actor):
         except Exception:
             node_delegate = None
         if node:
-            if (mebomb is not None and mebomb.is_impact and
+            if (mebomb.is_impact and
                     (node is self.owner or
                      (isinstance(node_delegate, stdbomb.Bomb)
                       and get_mebomb(node_delegate.bomb_type) is not None
