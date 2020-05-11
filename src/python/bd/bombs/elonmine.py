@@ -45,3 +45,5 @@ class ElonMine(MeBomb):
         # we now make it explodable.
         ba.timer(0.25, ba.WeakCall(actor._add_material,
                                    factory.land_mine_blast_material))
+        actor.texture_sequence.connectattr('output_texture', actor.node,
+                                           'color_texture')

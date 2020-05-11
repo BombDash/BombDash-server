@@ -26,6 +26,7 @@ class AirstrikeBomb(MeBomb):
             'reflection_scale': [1.5],
             'materials': materials})
 
+
 @blast('airstrike')
 def airstrike_blast(self, position, velocity, blast_radius,
                     hit_type, hit_subtype):

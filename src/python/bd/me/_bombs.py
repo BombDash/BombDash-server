@@ -194,8 +194,6 @@ class Bomb(ba.Actor):
             old_function(self)
             return
         mebomb.arm(self)
-        self.texture_sequence.connectattr('output_texture', self.node,
-                                          'color_texture')
         ba.playsound(factory.activate_sound, 0.5, position=self.node.position)
 
     @redefine_flag(RedefineFlag.REDEFINE)
