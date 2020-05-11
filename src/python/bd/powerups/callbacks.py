@@ -123,3 +123,8 @@ def airstrike_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
 @powerup('elon_mines', 'achievementMine', freq=1, bomb_type='elon_mine')
 def elon_mines_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     self.inc_bomb_count('elon_mine')
+
+
+@powerup('portal_bombs', 'light', freq=100, bomb_type='portal_bomb')
+def portal_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
+    self.inc_bomb_count('portal_bomb')
