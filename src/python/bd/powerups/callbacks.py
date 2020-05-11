@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     pass
 
 
-@powerup('speed', texture='powerupSpeed', freq=1)
+@powerup('speed', texture='powerupSpeed', freq=1_000)
 def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
     # if ba.app.config.get('Powerup Popups', True):
     #     powerup_text = get_locale(
@@ -24,6 +24,18 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
     #         scale=1,
     #         position=self.node.position).autoretain()
     powerup_expiration_time = 10
+    tex = ba.gettexture('powerupSpeed')
+
+    self._flash_billboard(tex)
+    if self.powerups_expire:
+        self.node.mini_billboard_2_texture = tex
+        t = ba.time()
+        self.node.mini_billboard_2_start_time = t
+        self.node.mini_billboard_2_end_time = t + powerup_expiration_time
+
+    if self.node.hockey:
+        return
+
     self.node.hockey = True
 
     def off_speed_wrapper():
@@ -32,14 +44,6 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
 
     ba.timer(powerup_expiration_time,
              off_speed_wrapper)
-
-    tex = ba.gettexture('powerupSpeed')
-    self._flash_billboard(tex)
-    if self.powerups_expire:
-        self.node.mini_billboard_2_texture = tex
-        t = ba.time()
-        self.node.mini_billboard_2_start_time = t
-        self.node.mini_billboard_2_end_time = t + powerup_expiration_time
 
 
 # FIXME: add cooldown or check what spaz is on ground
@@ -115,7 +119,7 @@ def companion_cube_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
         velocity=(0, 10, 0)).autoretain()
 
 
-@powerup('airstrike_bombs', 'menuIcon', freq=2_000, bomb_type='airstrike')
+@powerup('airstrike_bombs', 'menuIcon', freq=2, bomb_type='airstrike')
 def airstrike_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     self.inc_bomb_count('airstrike')
 
