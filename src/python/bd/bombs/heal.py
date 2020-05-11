@@ -62,4 +62,4 @@ def heal_blast(self: stdbomb.Blast,
         chunk_type='spark')
 
     TreatmentArea(position=position)
-    ba.playsound(ba.getsound('healthPowerup'))  # position=?
+    ba.playsound(ba.getsound('healthPowerup'), position=self.node.position)
