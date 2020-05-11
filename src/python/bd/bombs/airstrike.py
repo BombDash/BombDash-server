@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class AirstrikeBomb(MeBomb):
     def init(self, actor: stdbomb.Bomb, position, velocity, materials):
         factory = stdbomb.get_factory()
-        actor.node = ba.newnode('prop', delegate=self, attrs={
+        actor.node = ba.newnode('prop', delegate=actor, attrs={
             'body': 'sphere',
             'model': factory.impact_bomb_model,
             'color_texture': ba.gettexture('ouyaAButton'),
@@ -25,7 +25,6 @@ class AirstrikeBomb(MeBomb):
             'reflection': 'powerup',
             'reflection_scale': [1.5],
             'materials': materials})
-
 
 @blast('airstrike')
 def airstrike_blast(self, position, velocity, blast_radius,
