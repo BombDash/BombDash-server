@@ -54,6 +54,7 @@ def heal_blast(self: stdbomb.Blast,
                blast_radius: float = 2.0,
                hit_type: str = 'explosion',
                hit_subtype: str = 'normal'):
+    self.node = ba.newnode('light')  # We must define node
     ba.emitfx(
         position=position,
         velocity=(0, 0, 0),

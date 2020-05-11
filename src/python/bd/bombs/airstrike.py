@@ -30,6 +30,7 @@ class AirstrikeBomb(MeBomb):
 @blast('airstrike')
 def airstrike_blast(self, position, velocity, blast_radius,
                     hit_type, hit_subtype):
+    self.node = ba.newnode('light')  # We must define node
     ba.emitfx(
         position=position,
         velocity=velocity,
