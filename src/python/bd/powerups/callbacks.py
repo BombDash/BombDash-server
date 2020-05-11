@@ -115,6 +115,11 @@ def companion_cube_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
         velocity=(0, 10, 0)).autoretain()
 
 
-@powerup('airstrike_bombs', 'menuIcon', freq=12323213, bomb_type='airstrike')
+@powerup('airstrike_bombs', 'menuIcon', freq=2, bomb_type='airstrike')
 def airstrike_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     self.inc_bomb_count('airstrike')
+
+
+@powerup('elon_mines', 'achievementMine', freq=123313, bomb_type='elon_mine')
+def elon_mines_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
+    self.inc_bomb_count('elon_mine')

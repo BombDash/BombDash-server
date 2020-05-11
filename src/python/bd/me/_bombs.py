@@ -239,6 +239,8 @@ class Bomb(ba.Actor):
         mebomb = get_mebomb(self.bomb_type)
         if mebomb is None:
             return old_function(self)
+        self.arm_timer = \
+            ba.Timer(0.5, ba.WeakCall(self.handlemessage, stdbomb.ArmMessage()))
         mebomb.on_drop(self)
 
     @redefine_flag(RedefineFlag.DECORATE_ADVANCED)
