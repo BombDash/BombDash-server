@@ -22,8 +22,8 @@ class Airstrike(ba.Actor):
     """
 
     def __init__(
-            self, position: Sequence[float] = (0, 3, 0), velocity: Sequence[float] = (1, 1, 0),
-            amount: float = 5, bomb_type: str = 'impact', highlight: bool = True):
+            self, position: Sequence[float] = (0, 3, 0), velocity: Sequence[float] = (0, -5, 0),
+            amount: int = 15, bomb_type: str = 'impact', highlight: bool = True):
         ba.Actor.__init__(self)
         self.position = position
         self.velocity = velocity
@@ -39,26 +39,30 @@ class Airstrike(ba.Actor):
                 'position': position,
                 'volume_intensity_scale': 1.0})
 
-            # a little beautiful animation
             ba.animate(self.area_highlight, 'intensity',
                        {0: 0, 0.5: 1.0, 1: 0})
 
-        # can be done without a timer?
-        # or maybe the timer is the best option...
-        self.drop_timer = ba.Timer(
-            0.5, self._drop_bomb, repeat=True)
+        def wrapper():
+            self.drop_timer = ba.Timer(
+                0.25, self._drop_bomb, repeat=True)
+
+        ba.timer(1, wrapper)
 
     def _drop_bomb(self):
         """Drop a certain amount of bombs."""
         if self.drop_count < self.amount:
+            highest_pos = self.position[1] + 3
+            activity = ba.getactivity()
+            if isinstance(activity, ba.GameActivity):
+                highest_pos = activity.map.get_def_bound_box('area_of_interest_bounds')[4]
             drop_position = (
                 self.position[0] + random.uniform(1.5, -1.5),
-                self.position[1] + 3,
-                self.position[2] + random.uniform(1.5, -1.5)
-            )
+                highest_pos,
+                self.position[2] + random.uniform(1.5, -1.5))
 
             stdbomb.Bomb(bomb_type=self.bomb_type,
                          position=drop_position,
+                         blast_radius=1,
                          velocity=self.velocity).autoretain()
 
             self.drop_count += 1

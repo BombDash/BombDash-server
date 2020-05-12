@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     pass
 
 
-@powerup('speed', texture='powerupSpeed', freq=1)
+@powerup('speed', texture='powerupSpeed', freq=1_000)
 def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
     # if ba.app.config.get('Powerup Popups', True):
     #     powerup_text = get_locale(
@@ -24,6 +24,18 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
     #         scale=1,
     #         position=self.node.position).autoretain()
     powerup_expiration_time = 10
+    tex = ba.gettexture('powerupSpeed')
+
+    self._flash_billboard(tex)
+    if self.powerups_expire:
+        self.node.mini_billboard_2_texture = tex
+        t = ba.time()
+        self.node.mini_billboard_2_start_time = t
+        self.node.mini_billboard_2_end_time = t + powerup_expiration_time
+
+    if self.node.hockey:
+        return
+
     self.node.hockey = True
 
     def off_speed_wrapper():
@@ -32,14 +44,6 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
 
     ba.timer(powerup_expiration_time,
              off_speed_wrapper)
-
-    tex = ba.gettexture('powerupSpeed')
-    self._flash_billboard(tex)
-    if self.powerups_expire:
-        self.node.mini_billboard_2_texture = tex
-        t = ba.time()
-        self.node.mini_billboard_2_start_time = t
-        self.node.mini_billboard_2_end_time = t + powerup_expiration_time
 
 
 # FIXME: add cooldown or check what spaz is on ground
@@ -125,6 +129,6 @@ def elon_mines_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     self.inc_bomb_count('elon_mine')
 
 
-@powerup('portal_bombs', 'light', freq=100, bomb_type='portal_bomb')
+@powerup('portal_bombs', 'light', freq=1, bomb_type='portal_bomb')
 def portal_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     self.inc_bomb_count('portal_bomb')
