@@ -7,12 +7,15 @@
       <w>ballistica</w>
       <w>bastd</w>
       <w>bombtextures</w>
+      <w>botset</w>
       <w>cooldown</w>
       <w>deek</w>
       <w>elon</w>
       <w>errorsound</w>
       <w>exbomb</w>
       <w>getplayer</w>
+      <w>gnode</w>
+      <w>grom</w>
       <w>handlemessage</w>
       <w>hmmm</w>
       <w>ispunch</w>
@@ -35,6 +38,8 @@
       <w>pythonpath</w>
       <w>spaz</w>
       <w>stdbomb</w>
+      <w>stdbot</w>
+      <w>stdpowerup</w>
       <w>stdspaz</w>
       <w>teleported</w>
       <w>vpos</w>
