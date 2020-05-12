@@ -49,6 +49,7 @@ class CompanionCube(ba.Actor):
             'reflection_scale': [0.25],
             'materials': (ba.sharedobj('object_material'),
                           ba.sharedobj('footing_material'))})
+        ba.animate(self.node, 'model_scale', {0: 0, 0.2: 1.3, 0.26: 1})
 
         self.spawn_random_phrase_timer: ba.Timer = ba.Timer(
             self.phrases_time,
