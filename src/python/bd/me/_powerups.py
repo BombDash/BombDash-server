@@ -47,6 +47,8 @@ class Spaz(ba.Actor):
     def handlemessage(self, msg: Any, returned: Any = None) -> Any:
         super(stdspaz.Spaz, self).handlemessage(msg)
         if isinstance(msg, ba.PowerupMessage):
+            if not self.is_alive():
+                return
             for poweruptype, texture, callback in _callbacks:
                 if msg.poweruptype == poweruptype:
                     callback(self, msg)
