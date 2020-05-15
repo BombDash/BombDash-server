@@ -326,7 +326,7 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
 
         def lightning_bolt(position, radius=1):
             ba.camerashake(4)
-            vignette_outer = (1.0, 1.0, 1.0)
+            vignette_outer = ba.sharedobj('globals').vignette_outer
             # if ba.getactivity().tint is None:
             #     ba.getactivity().std_tint = ba.sharedobj('globals').vignette_outer
             #     vignette_outer = ba.sharedobj('globals').vignette_outer
@@ -346,7 +346,9 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
                 250: 0,
                 260: radius,
                 410: radius / 2,
-                510: 0}, timeformat=ba.TimeFormat.MILLISECONDS)
+                510: 0}, 
+                timeformat=ba.TimeFormat.MILLISECONDS,
+                suppress_format_warning=True)
 
             ba.animate_array(ba.sharedobj('globals'), 'vignette_outer', 3, {
                 0: vignette_outer, 0.2: (0.2, 0.2, 0.2), 0.51: vignette_outer})
