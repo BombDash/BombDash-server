@@ -121,7 +121,7 @@ def companion_cube_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
         position=(self.node.position[0],
                   self.node.position[1] + 1,
                   self.node.position[2]),
-        velocity=(0, 10, 0)).autoretain()
+        velocity=(0, 5, 0)).autoretain()
 
 
 @powerup('airstrike_bombs', 'menuIcon', freq=2, bomb_type='airstrike')
