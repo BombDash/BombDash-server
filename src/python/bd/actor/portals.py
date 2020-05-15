@@ -30,7 +30,7 @@ class Portals(ba.Actor):
         self.radius = radius
 
         # self.cooldown = False
-        self.already_teleported = False
+        self.already_teleported = {}
         self.node_radius = radius / 1.75
 
         node_scale = {
@@ -119,68 +119,92 @@ class Portals(ba.Actor):
 
     def _first_portal_teleportation(self):
         """Teleportation of a node that entered the first portal."""
-        if self.already_teleported:
+        node = ba.get_collision_info('opposing_node')
+        name = node.get_name()
+
+        if self.already_teleported.get(name):
             return
 
-        node = ba.get_collision_info('opposing_node')
+        def wrapper(nodename):
+            self.already_teleported[nodename] = False
 
-        def wrapper():
-            self.already_teleported = False
+        hold_node = node.hold_node
 
         node.handlemessage(ba.StandMessage(
             position=self.second_node.position))
 
-        self.already_teleported = True
-        ba.timer(1, wrapper)
+        if hold_node:
+            self._first_portal_handler(hold_node, offset=(0, 1, 0))
+            node.hold_node = hold_node
+
+        self.already_teleported[name] = True
+        ba.timer(1, ba.Call(wrapper, name))
 
     def _second_portal_teleportation(self):
         """Teleportation of a node that entered the second portal."""
-        if self.already_teleported:
+        node = ba.get_collision_info('opposing_node')
+        name = node.get_name()
+
+        if self.already_teleported.get(name):
             return
 
-        node = ba.get_collision_info('opposing_node')
+        def wrapper(nodename):
+            self.already_teleported[nodename] = False
 
-        def wrapper():
-            self.already_teleported = False
+        hold_node = node.hold_node
 
         node.handlemessage(ba.StandMessage(
             position=self.first_node.position))
 
-        self.already_teleported = True
-        ba.timer(1, wrapper)
+        if hold_node:
+            self._second_portal_handler(hold_node, offset=(0, 1, 0))
+            node.hold_node = hold_node
 
-    def _first_portal_handler(self):
+        self.already_teleported[name] = True
+        ba.timer(1, ba.Call(wrapper, name))
+
+    def _first_portal_handler(self, node=None, offset=(0, 0, 0)):
         """Checking a node before teleporting in the first portal."""
-        if self.already_teleported:
+        if node is None:
+            node = ba.get_collision_info('opposing_node')
+        name = node.get_name()
+
+        if self.already_teleported.get(name):
             return
-
-        node = ba.get_collision_info('opposing_node')
-
         velocity = node.velocity
-        node.position = self.second_position
+        node.position = (
+            self.second_position[0] + offset[0],
+            self.second_position[1] + offset[1],
+            self.second_position[2] + offset[2])
 
         def velocity_wrapper():
             if node:
                 node.velocity = velocity
 
-        ba.timer(0.01, velocity_wrapper)
+        ba.timer(0.001, velocity_wrapper)
 
-        self.already_teleported = True
+        self.already_teleported[node.get_name()] = True
 
-        def wrapper():
-            self.already_teleported = False
+        def wrapper(nodename):
+            self.already_teleported[nodename] = False
 
-        ba.timer(1, wrapper)
+        ba.timer(1, ba.Call(wrapper, name))
 
-    def _second_portal_handler(self):
+    def _second_portal_handler(self, node=None, offset=(0, 0, 0)):
         """Checking a node before teleporting in the second portal."""
-        if self.already_teleported:
+        if node is None:
+            node = ba.get_collision_info('opposing_node')
+
+        name = node.get_name()
+
+        if self.already_teleported.get(name):
             return
 
-        node = ba.get_collision_info('opposing_node')
-
         velocity = node.velocity
-        node.position = self.first_position
+        node.position = (
+            self.first_position[0] + offset[0],
+            self.first_position[1] + offset[1],
+            self.first_position[2] + offset[2])
 
         def velocity_wrapper():
             if node:
@@ -188,10 +212,9 @@ class Portals(ba.Actor):
 
         ba.timer(0.01, velocity_wrapper)
 
-        self.already_teleported = True
+        self.already_teleported[name] = True
 
-        def wrapper():
-            self.already_teleported = False
+        def wrapper(nodename):
+            self.already_teleported[nodename] = False
 
-        ba.timer(1, wrapper)
-
+        ba.timer(1, ba.Call(wrapper, name))

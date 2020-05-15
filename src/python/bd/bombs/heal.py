@@ -44,7 +44,7 @@ class HealBomb(MeBomb):
             'position', actor.second_shield, 'position')
 
         ba.animate(actor.second_shield, 'radius',
-                   {0: 0.1, 0.3: 0.5, 0.6: 0.1}, True)
+                   {0: 0.1, 0.05: 0.4, 0.2: 0.1, 0.25: 0.5, 0.4: 0.3, 0.7: 0.1}, True)
 
 
 @blast('heal')
