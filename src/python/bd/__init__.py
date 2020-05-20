@@ -1,3 +1,4 @@
 # Copyright (c) 2020 BombDash
 from . import powerups
 from . import bombs
+from . import common
