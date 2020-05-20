@@ -27,7 +27,7 @@ class AutoAim:
                      ('call', 'at_connect', self._touch_handler)))
 
         # raise the item a little
-        self.item.extraAcceleration = (0, 20, 0)
+        self.item.extra_acceleration = (0, 20, 0)
         # if the item exists, then take its position,
         # else "turn the bench"
         if self.item.exists():
@@ -60,7 +60,7 @@ class AutoAim:
                 node.getdelegate().is_alive()):
             self.target = node
             self.node.delete()
-            self.item.extraAcceleration = (0, 20, 0)
+            self.item.extra_acceleration = (0, 20, 0)
             self._move_item()
 
     def _move_item(self):

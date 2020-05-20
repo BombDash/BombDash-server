@@ -578,7 +578,7 @@ def bomb_handle_sticky_gift(self, m, node):
 
         def wrapper():
             if self.node is not None and self.node.exists():
-                self.node.extraAcceleration = (0, 80, 0)
+                self.node.extra_acceleration = (0, 80, 0)
 
             if self.aim is not None:
                 self.aim.off()

@@ -103,17 +103,17 @@ class CompanionCube(ba.Actor):
                 self.node.delete()
 
         elif isinstance(msg, ba.PickedUpMessage):
-            self.node.extraAcceleration = (0, 25, 0)
+            self.node.extra_acceleration = (0, 25, 0)
 
             def up():
                 if self.node.exists():
-                    self.node.extraAcceleration = (0, 35, 0)
+                    self.node.extra_acceleration = (0, 35, 0)
 
             ba.timer(0.3, up)
 
             def check():
                 if not msg or not msg.node.exists():
-                    self.node.extraAcceleration = (0, 0, 0)
+                    self.node.extra_acceleration = (0, 0, 0)
 
             ba.timer(0.1, check)
 
@@ -139,7 +139,7 @@ class CompanionCube(ba.Actor):
 
         elif isinstance(msg, ba.DroppedMessage):
             self.regen_timer = None
-            self.node.extraAcceleration = (0, 0, 0)
+            self.node.extra_acceleration = (0, 0, 0)
 
         elif isinstance(msg, ba.HitMessage):
             self.node.handlemessage('impulse',
