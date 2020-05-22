@@ -1,7 +1,7 @@
 # Copyright (c) 2020 BombDash
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import random
 import ba
@@ -88,6 +88,9 @@ class MeBomb:
     def on_drop(self, actor):
         pass
 
+    def handlemessage(self, actor, msg):
+        pass
+
 
 def get_mebomb(bomb_type: str) -> MeBomb:
     for mebomb in _bombs:
@@ -97,7 +100,7 @@ def get_mebomb(bomb_type: str) -> MeBomb:
 
 @redefine_class_methods(stdbomb.Bomb)
 class Bomb(ba.Actor):
-    _redefine_methods = ('__init__', '_handle_hit', 'arm', '_handle_impact', '_handle_dropped')
+    _redefine_methods = ('__init__', '_handle_hit', 'arm', '_handle_impact', '_handle_dropped', 'handlemessage')
 
     @redefine_flag(RedefineFlag.DECORATE_ADVANCED)
     def __init__(self, old_function: Callable,
@@ -265,6 +268,12 @@ class Bomb(ba.Actor):
                       and node_delegate.owner is self.owner))):
                 return
             self.handlemessage(ExplodeMessage())
+    
+    @redefine_flag(RedefineFlag.DECORATE_ADVANCED)
+    def handlemessage(self, msg: Any, old_function: Callable) -> Any:
+        mebomb = get_mebomb(self.bomb_type)
+        if not (mebomb is not None and mebomb.handlemessage(self, msg)):
+            old_function(self, msg)
 
 
 @redefine_class_methods(stdbomb.Blast)
