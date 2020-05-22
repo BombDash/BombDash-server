@@ -1,7 +1,7 @@
 # Copyright (c) 2020 BombDash
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import random
 import ba
@@ -10,7 +10,7 @@ from bastd.actor.bomb import get_factory, ExplodeMessage
 from ._redefine import redefine_class_methods, redefine_flag, RedefineFlag
 
 if TYPE_CHECKING:
-    from typing import Callable, List, Type, Optional, Dict, Sequence
+    from typing import Callable, List, Type, Optional, Dict, Sequence, Any
 
 _bombs: List[MeBomb] = []
 _blasts: Dict[str, Callable] = {}
