@@ -139,6 +139,11 @@ def portal_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     self.inc_bomb_count('portal_bomb')
 
 
+@powerup('sticky_gift_bomb', 'achievementCrossHair', freq=1, bomb_type='sticky_gift')
+def portal_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
+    self.inc_bomb_count('sticky_gift')
+
+
 @powerup('lucky_block', 'achievementEmpty', freq=2)
 def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     event_number = random.randint(1, 15)
