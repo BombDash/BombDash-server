@@ -39,7 +39,7 @@ class Chooser:
                             float(code[2]),
                             int(code[3]),
                             int(code[4]))
-                        should_del.append(i)
+                        # should_del.append(i)
             for i in should_del:
                 self._profilenames.remove(i)
         except Exception as err:
