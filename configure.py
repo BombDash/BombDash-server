@@ -3,14 +3,20 @@
 
 import sys
 import os
+import subprocess
 
 
-def run(cmd, capture_stdout=False, show=True):
+def run(cmd, capture_stdout=False, show=True, doraise=True):
     if show:
         print(f'\033[01;33m$ {cmd}\033[00m')  # ]]
-    if capture_stdout:
-        return os.popen(cmd).read()
-    os.system(cmd)
+    process = subprocess.Popen(
+        ['sh', '-c', cmd],
+        # stdout=subprocess.PIPE if capture_stdout else subprocess.STDOUT
+        )
+    errno = process.wait()
+    if errno and doraise:
+        raise RuntimeError(f'Process `{cmd}` exited with code {errno}')
+    return False if errno else process.stdout.read() if capture_stdout else True
 
 
 def build(build_type, only_copy=False):
