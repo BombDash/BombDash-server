@@ -7,7 +7,7 @@ import ba
 import bastd.actor.spaz as stdspaz
 import bastd.actor.bomb as stdbomb
 from bastd.actor import powerupbox
-from bastd.actor.powerupbox import get_factory, DEFAULT_POWERUP_INTERVAL
+from bastd.actor.powerupbox import DEFAULT_POWERUP_INTERVAL
 
 from ._redefine import redefine_class_methods, redefine_flag, RedefineFlag
 
@@ -161,7 +161,7 @@ class PowerupBox(ba.Actor):
 
         super(powerupbox.PowerupBox, self).__init__()
 
-        factory = get_factory()
+        factory = powerupbox.PowerupBoxFactory.get()
         self.poweruptype = poweruptype
         self._powersgiven = False
 

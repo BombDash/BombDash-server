@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import random
 import ba
 from bastd.actor import bomb as stdbomb
-from bastd.actor.bomb import get_factory, ExplodeMessage
+from bastd.actor.bomb import BombFactory, ExplodeMessage, get_factory
 from ._redefine import redefine_class_methods, redefine_flag, RedefineFlag
 
 if TYPE_CHECKING:
@@ -211,8 +211,8 @@ class Bomb(ba.Actor):
             # Also lets change the owner of the bomb to whoever is setting
             # us off. (this way points for big chain reactions go to the
             # person causing them).
-            if msg.source_player not in [None]:
-                self.source_player = msg.source_player
+            if msg._source_player not in [None]:
+                self.source_player = msg._source_player
 
                 # Also inherit the hit type (if a landmine sets off by a bomb,
                 # the credit should go to the mine)
@@ -251,12 +251,12 @@ class Bomb(ba.Actor):
             old_function(self)
             return
         mebomb.on_impact(self)
-        node = ba.get_collision_info('opposing_node')
+        node = ba.getcollision().opposingnode
         # if we're an impact bomb and we came from this node, don't explode...
         # alternately if we're hitting another impact-bomb from the same
         # source, don't explode...
         try:
-            node_delegate = node.getdelegate()
+            node_delegate = node.getdelegate(stdbomb.Bomb)
         except Exception:
             node_delegate = None
         if node:

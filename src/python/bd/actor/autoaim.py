@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import ba
+from bastd.actor.playerspaz import PlayerSpaz
 
 if TYPE_CHECKING:
     from typing import Optional, Sequence
@@ -51,18 +52,18 @@ class AutoAim:
 
     def _touch_handler(self) -> None:
         """The action handler of an item if it touches a target."""
-        node: ba.Node = ba.get_collision_info('opposing_node')
-        node_team: ba.Team = (node.getdelegate().getplayer().team
-                              if hasattr(node.getdelegate(), 'getplayer')
+        node: ba.Node = ba.getcollision().opposingnode
+        node_team: ba.Team = (node.getdelegate(PlayerSpaz).getplayer(ba.Player).team
+                              if hasattr(node.getdelegate(PlayerSpaz), 'getplayer')
                               else None)
 
-        owner_team = self.owner.getdelegate().getplayer().team
+        owner_team = self.owner.getdelegate(PlayerSpaz).getplayer(ba.Player).team
         if (node.exists() and
                 self.owner.exists() and
                 self.item.exists() and
                 node_team is not None and
                 node_team != owner_team and
-                node.getdelegate().is_alive()):
+                node.getdelegate(PlayerSpaz).is_alive()):
             self.target = node
             self.node.delete()
             self.item.extra_acceleration = (0, 20, 0)

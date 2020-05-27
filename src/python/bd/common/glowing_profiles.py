@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import random
-import weakref
-
 import ba
 import _ba
 
@@ -14,16 +11,16 @@ def get_locale(*args):
 
 @redefine_class_methods(ba.Chooser)
 class Chooser:
-    _redefine_methods = ('__init__', '_get_glowing_colors', 'update_from_player_profiles',
+    _redefine_methods = ('_gcinit', '_get_glowing_colors', 'update_from_profile',
                          '_get_name')
 
-    @redefine_flag(RedefineFlag.DECORATE_ADVANCED)
-    def __init__(self, vpos, player, lobby, old_function):
+    def _gcinit(self):
+        if hasattr(self, '_gcinit_done'):
+            return
         self.glow_dict = {}
         self._markers = ('"', "'", '^', '%', ';', '`')
-        old_function(self, vpos, player, lobby)
         self._get_glowing_colors()
-        self.update_from_player_profiles()
+        self._gcinit_done = True
 
     @redefine_flag(RedefineFlag.REDEFINE)
     def _get_glowing_colors(self):
@@ -58,31 +55,32 @@ class Chooser:
         return name
 
     @redefine_flag(RedefineFlag.DECORATE_ADVANCED)
-    def update_from_player_profiles(self, old_function):
+    def update_from_profile(self, old_function):
+        self._gcinit()
         from ba import _profile
         try:
             self._profilename = self._profilenames[self._profileindex]
-            character = self.profiles[self._profilename]['character']
+            character = self._profiles[self._profilename]['character']
 
             if self._profilename[0] in self.glow_dict:
-                if (character not in self.character_names
+                if (character not in self._character_names
                         and character in _ba.app.spaz_appearances):
-                    self.character_names.append(character)
-                self.character_index = self.character_names.index(character)
+                    self._character_names.append(character)
+                self._character_index = self._character_names.index(character)
 
                 player_glowing_dict = self.glow_dict[self._profilename[0]]
                 color_marker = player_glowing_dict[0]
-                color_marker = max(-25.0, min(color_marker, 25.0))
+                color_marker = max(-999.0, min(color_marker, 50.0))
 
                 highlight_marker = float(player_glowing_dict[1])
-                highlight_marker = max(-25.0, min(highlight_marker, 25.0))
+                highlight_marker = max(-999.0, min(highlight_marker, 50.0))
 
                 stabilize_color = int(player_glowing_dict[2]) > 0
                 stabilize_highlight = int(player_glowing_dict[3]) > 0
                 self._color, self._highlight = \
                     _profile.get_player_profile_colors(
                         self._profilename,
-                        profiles=self.profiles)
+                        profiles=self._profiles)
 
                 if stabilize_color:
                     m = max(self._color)
@@ -112,7 +110,7 @@ class Chooser:
                     self._highlight = tuple(self._highlight)
             else:
                 old_function(self)
-        except Exception:
+        except KeyError:
             self.character_index = self._random_character_index
             self._color = self._random_color
             self._highlight = self._random_highlight

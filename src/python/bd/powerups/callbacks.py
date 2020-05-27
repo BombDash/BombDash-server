@@ -10,6 +10,7 @@ from bastd.actor import spaz as stdspaz
 from bastd.actor import powerupbox as stdpowerup
 from bastd.actor import bomb as stdbomb
 from bastd.actor import spazbot as stdbot
+from bastd.actor import playerspaz
 from bd.me import powerup
 from bd.actor import CompanionCube
 
@@ -89,7 +90,7 @@ def high_jump_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
 
         # self._turboFilterAddPress('jump')  # Это че?
 
-    self.node.getdelegate().getplayer().assign_input_call(
+    self.node.getdelegate(playerspaz.PlayerSpaz).getplayer(ba.Player).assign_input_call(
         'jumpPress', high_jump_wrapper)
 
     def off_jump_boost_wrapper():
@@ -177,7 +178,7 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
             spread=0.7,
             chunk_type='spark')
 
-        powerup_type = stdpowerup.get_factory().get_random_powerup_type()
+        powerup_type = stdpowerup.PowerupBoxFactory.get().get_random_powerup_type()
 
         stdpowerup.PowerupBox(
             position=(self.node.position[0],
@@ -186,7 +187,7 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
             poweruptype=powerup_type,
             expire=True).autoretain()
 
-        powerup_type = stdpowerup.get_factory(
+        powerup_type = stdpowerup.PowerupBoxFactory.get(
         ).get_random_powerup_type()
 
         stdpowerup.PowerupBox(
@@ -196,7 +197,7 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
             poweruptype=powerup_type,
             expire=True).autoretain()
 
-        powerup_type = stdpowerup.get_factory().get_random_powerup_type()
+        powerup_type = stdpowerup.PowerupBoxFactory.get().get_random_powerup_type()
 
         stdpowerup.PowerupBox(
             position=(self.node.position[0],
@@ -317,10 +318,10 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
 
     elif event_number == 15:
         def drop_man():
-            botset: stdbot.BotSet
+            botset: stdbot.SpazBotSet
             activity = ba.getactivity()
             if not hasattr(activity, 'botset'):
-                activity.botset = botset = stdbot.BotSet()
+                activity.botset = botset = stdbot.SpazBotSet()
             botset = activity.botset
             aoi_bounds = ba.sharedobj('globals').area_of_interest_bounds
             botset.spawn_bot(stdbot.BrawlerBotLite,

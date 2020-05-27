@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING
 import random
 import ba
 
+from bastd.actor import playerspaz
+
 if TYPE_CHECKING:
     from typing import Sequence, List, Any
 
@@ -119,11 +121,11 @@ class CompanionCube(ba.Actor):
 
             def regen():
                 if (msg is not None and msg.node.exists()
-                        and msg.node.getdelegate().hitpoints
-                        < msg.node.getdelegate().hitpoints_max):
-                    msg.node.getdelegate().hitpoints += 1
-                    msg.node.getdelegate()._last_hit_time = None
-                    msg.node.getdelegate()._num_time_shit = 0
+                        and msg.node.getdelegate(playerspaz.PlayerSpaz).hitpoints
+                        < msg.node.getdelegate(playerspaz.PlayerSpaz).hitpoints_max):
+                    msg.node.getdelegate(playerspaz.PlayerSpaz).hitpoints += 1
+                    msg.node.getdelegate(playerspaz.PlayerSpaz)._last_hit_time = None
+                    msg.node.getdelegate(playerspaz.PlayerSpaz)._num_time_shit = 0
                     msg.node.hurt -= 0.001
                     ba.emitfx(
                         position=msg.node.position,

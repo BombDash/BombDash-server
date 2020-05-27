@@ -20,7 +20,7 @@ class PortalBomb(MeBomb):
         factory = stdbomb.get_factory()
         actor.node = ba.newnode('prop', delegate=actor, attrs={
             'body': 'sphere',
-            'bodyScale': 0.85,
+            'body_scale': 0.85,
             'position': position,
             'velocity': velocity,
             'materials': materials})

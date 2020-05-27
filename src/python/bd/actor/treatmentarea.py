@@ -54,7 +54,7 @@ class TreatmentArea(ba.Actor):
 
     def _touch_handler(self):
         """The action handler of an item if it touches a target."""
-        node: ba.Node = ba.get_collision_info('opposing_node')
+        node: ba.Node = ba.getcollision().opposingnode
         if node not in self.cured_nodes:
             node.handlemessage(ba.PowerupMessage(
                 poweruptype='health'))

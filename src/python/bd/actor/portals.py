@@ -119,7 +119,7 @@ class Portals(ba.Actor):
 
     def _first_portal_teleportation(self):
         """Teleportation of a node that entered the first portal."""
-        node = ba.get_collision_info('opposing_node')
+        node = ba.getcollision().opposingnode
         name = node.get_name()
 
         if self.already_teleported.get(name):
@@ -142,7 +142,7 @@ class Portals(ba.Actor):
 
     def _second_portal_teleportation(self):
         """Teleportation of a node that entered the second portal."""
-        node = ba.get_collision_info('opposing_node')
+        node = ba.getcollision().opposingnode
         name = node.get_name()
 
         if self.already_teleported.get(name):
@@ -166,7 +166,7 @@ class Portals(ba.Actor):
     def _first_portal_handler(self, node=None, offset=(0, 0, 0)):
         """Checking a node before teleporting in the first portal."""
         if node is None:
-            node = ba.get_collision_info('opposing_node')
+            node = ba.getcollision().opposingnode
         name = node.get_name()
 
         if self.already_teleported.get(name):
@@ -193,7 +193,7 @@ class Portals(ba.Actor):
     def _second_portal_handler(self, node=None, offset=(0, 0, 0)):
         """Checking a node before teleporting in the second portal."""
         if node is None:
-            node = ba.get_collision_info('opposing_node')
+            node = ba.getcollision().opposingnode
 
         name = node.get_name()
 
