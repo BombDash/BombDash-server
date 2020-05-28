@@ -57,7 +57,7 @@ class Spaz(ba.Actor):
                 else:
                     damage = int(damage_scale * self.node.damage)
 
-                if damage > 999:
+                if damage > 9:
                     PopupText(
                         get_locale('fatality_text'),
                         color=(0.905, 0.298, 0.235),
@@ -113,11 +113,7 @@ class Spaz(ba.Actor):
         return returned
 
     def lightning_bolt(self, position=(0, 10, 0), radius=10):
-        # if ba.getactivity().std_tint is None:
-        # ba.getactivity().std_tint = ba.sharedobj('globals').tint
         tint = ba.sharedobj('globals').tint
-        # else:
-        #     tint = ba.getactivity().std_tint
 
         sounds = ('impactHard', 'impactHard2', 'impactHard3')
         ba.playsound(ba.getsound(
