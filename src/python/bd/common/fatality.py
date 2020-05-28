@@ -4,15 +4,7 @@ import ba
 from bastd.actor import spaz as stdspaz
 
 from bd.me import redefine_flag, redefine_class_methods, RedefineFlag
-
-
-def get_locale(key):
-    locales = {
-        "fatality_text": "FATALITY!!!",
-        "crazy_text": "CRAZY!!",
-        "aggressive_text": "AGGRESSIVE!"
-    }
-    return locales.get(key)
+from bd.locale import get_locale
 
 
 @redefine_class_methods(stdspaz.Spaz)
@@ -65,7 +57,7 @@ class Spaz(ba.Actor):
                 else:
                     damage = int(damage_scale * self.node.damage)
 
-                if damage > 9:
+                if damage > 999:
                     PopupText(
                         get_locale('fatality_text'),
                         color=(0.905, 0.298, 0.235),

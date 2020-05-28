@@ -2,10 +2,7 @@ import ba
 import _ba
 
 from bd.me import redefine_flag, redefine_class_methods, RedefineFlag
-
-
-def get_locale(*args):
-    return 'Error'
+from bd.locale import get_locale
 
 
 @redefine_class_methods(ba.Chooser)

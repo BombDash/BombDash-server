@@ -6,14 +6,10 @@ import random
 import ba
 
 from bastd.actor import playerspaz
+from bd.locale import get_locale
 
 if TYPE_CHECKING:
     from typing import Sequence, List, Any
-
-
-def get_locale(*args, **kwargs):  # TODO: create get_locate function
-    if args[0] == 'cube_companion_phrases':
-        return 'Не бей пж', 'Я жив!', 'Ураа!'
 
 
 class CompanionCube(ba.Actor):
