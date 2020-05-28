@@ -75,9 +75,9 @@ class Spaz(ba.Actor):
                     ba.emitfx(
                         position=msg.pos,
                         chunk_type='spark',
-                        velocity=(msg.force_direction[0]*1.3,
-                                  msg.force_direction[1]*1.3+5.0,
-                                  msg.force_direction[2]*1.3),
+                        velocity=(msg.force_direction[0] * 1.3,
+                                  msg.force_direction[1] * 1.3 + 5.0,
+                                  msg.force_direction[2] * 1.3),
                         count=45,
                         scale=1.0,
                         spread=1.0)
@@ -95,9 +95,9 @@ class Spaz(ba.Actor):
                     ba.emitfx(
                         position=msg.pos,
                         chunk_type='spark',
-                        velocity=(msg.force_direction[0]*1.3,
-                                  msg.force_direction[1]*1.3+5.0,
-                                  msg.force_direction[2]*1.3),
+                        velocity=(msg.force_direction[0] * 1.3,
+                                  msg.force_direction[1] * 1.3 + 5.0,
+                                  msg.force_direction[2] * 1.3),
                         count=45,
                         scale=1.0,
                         spread=1.0)
