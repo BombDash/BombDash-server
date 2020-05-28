@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import ba
 import _ba
 

@@ -52,55 +52,47 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
              off_speed_wrapper)
 
 
-# FIXME: add cooldown or check what spaz is on ground
-@powerup('high_jump', texture='buttonJump', freq=1)
-def high_jump_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
-    # if ba.app.config.get('Powerup Popups', True):
-    #     powerup_text = get_locale(
-    #         'powerup_names')['jump_boost']
-    #
-    #     PopupText(
-    #         ba.Lstr(translate=('gameDescriptions', powerup_text)),
-    #         color=(1, 1, 1),
-    #         scale=1,
-    #         position=self.node.position).autoretain()
-
+@powerup('jetpack', texture='buttonJump', freq=1)
+def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
     powerup_expiration_time = 20
 
-    def high_jump_wrapper():
+    def _jetpack_wrapper():
         if not self.node.exists():
             return
 
-        t = ba.time()
         if self.node.knockout <= 0 and self.node.frozen <= 0:
             self.node.jump_pressed = True
             ba.emitfx(
                 position=(self.node.position[0],
                           self.node.position[1] - 0.5,
                           self.node.position[2]),
-                velocity=(0, 0, 0),
+                velocity=(0, -10, 0),
                 count=75,
-                spread=0.5,
+                spread=0.25,
                 chunk_type='spark')
 
-            self.node.handlemessage(
-                'impulse', self.node.position[0],
-                self.node.position[1] + 10, self.node.position[2],
-                0, 0, 0, 200, 200, 0, 0, 0, 200, 0)
+    def jetpack_wrapper():
+        self.node.handlemessage(
+            'impulse', self.node.position[0],
+            self.node.position[1] + 10, self.node.position[2],
+            0, 0, 0, 150, 20, 0, 0, 0, 150, 0)
+
+        for i in range(0, 200, 50):
+            ba.timer(i, _jetpack_wrapper, timeformat=ba.TimeFormat.MILLISECONDS)
 
         # self._turboFilterAddPress('jump')  # Это че?
 
     self.node.getdelegate(playerspaz.PlayerSpaz).getplayer(ba.Player).assign_input_call(
-        'jumpPress', high_jump_wrapper)
+        'jumpPress', jetpack_wrapper)
 
-    def off_jump_boost_wrapper():
+    def off_jetpack_wrapper():
         if self.node.exists():
             self._jumpCooldown = 250
             # А это че?
             # self.node.getdelegate().getplayer().actor.connectControlsToPlayer()
 
     ba.timer(powerup_expiration_time,
-             off_jump_boost_wrapper)
+             off_jetpack_wrapper)
 
     tex = ba.gettexture('buttonJump')
     self._flash_billboard(tex)
