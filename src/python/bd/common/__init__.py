@@ -1,1 +1,1 @@
-from . import glowing_profiles
+from . import glowing_profiles, fatality

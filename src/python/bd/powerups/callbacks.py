@@ -231,7 +231,7 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
         position = self.node.position
 
         def rain_wrapper():
-            p_type = stdpowerup.get_factory().get_random_powerup_type()
+            p_type = stdpowerup.PowerupBoxFactory.get().get_random_powerup_type()
 
             new_position = (
                 -10 + position[0] + random.random() * 20,
