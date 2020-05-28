@@ -57,7 +57,7 @@ class Spaz(ba.Actor):
                 else:
                     damage = int(damage_scale * self.node.damage)
 
-                if damage > 9:
+                if damage > 999:
                     PopupText(
                         get_locale('fatality_text'),
                         color=(0.905, 0.298, 0.235),
