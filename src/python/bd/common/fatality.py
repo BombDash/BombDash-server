@@ -17,7 +17,7 @@ def get_locale(key):
 
 @redefine_class_methods(stdspaz.Spaz)
 class Spaz(ba.Actor):
-    _redefine_methods = ('handlemessage',)
+    _redefine_methods = ('handlemessage', 'lightning_bolt')
 
     @redefine_flag(RedefineFlag.DECORATE_AFTER)
     def handlemessage(self, msg, returned):
@@ -65,7 +65,7 @@ class Spaz(ba.Actor):
                 else:
                     damage = int(damage_scale * self.node.damage)
 
-                if damage > 999:
+                if damage > 9:
                     PopupText(
                         get_locale('fatality_text'),
                         color=(0.905, 0.298, 0.235),
@@ -85,6 +85,17 @@ class Spaz(ba.Actor):
                     self.lightning_bolt(
                         position=self.node.position,
                         radius=3)
+
+                    gnode = ba.sharedobj('globals')
+
+                    if not gnode.slow_motion:
+                        gnode.slow_motion = True
+
+                        def off_sm():
+                            if gnode:
+                                gnode.slow_motion = False
+                        ba.timer(0.25, off_sm)
+
                 elif 800 < damage < 999:
                     PopupText(
                         get_locale('crazy_text'),
@@ -108,3 +119,35 @@ class Spaz(ba.Actor):
                         scale=1.5,
                         position=self.node.position).autoretain()
         return returned
+
+    def lightning_bolt(self, position=(0, 10, 0), radius=10):
+        # if ba.getactivity().std_tint is None:
+        # ba.getactivity().std_tint = ba.sharedobj('globals').tint
+        tint = ba.sharedobj('globals').tint
+        # else:
+        #     tint = ba.getactivity().std_tint
+
+        sounds = ('impactHard', 'impactHard2', 'impactHard3')
+        ba.playsound(ba.getsound(
+            random.choice(sounds)),
+            volume=2)
+
+        light = ba.newnode('light', attrs={
+            'position': position,
+            'color': (0.2, 0.2, 0.4),
+            'volume_intensity_scale': 1.0,
+            'radius': radius})
+
+        intensity = {
+            0: 1,
+            0.05: radius,
+            0.15: radius / 2,
+            0.25: 0,
+            0.26: radius,
+            0.41: radius / 2,
+            0.51: 0
+        }
+
+        ba.animate(light, 'intensity', intensity)
+        ba.animate_array(ba.sharedobj('globals'), 'tint', 3,
+                         {0: tint, 0.2: (0.2, 0.2, 0.2), 0.51: tint})
