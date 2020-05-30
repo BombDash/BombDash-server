@@ -85,7 +85,7 @@ current_locale = {
             'elon_mines': 'Мина Илона Маска',
             'heal_bombs': 'Лечебная бомба',
             'health': 'Аптечка',
-            'jetpack': 'Jet-пак',
+            'jetpack': 'Реактивный ранец',
             'holy_bombs': 'Святая бомба',
             'ice_bombs': 'Ледяные бомбы',
             'impact_bombs': 'Ударные бомбы',

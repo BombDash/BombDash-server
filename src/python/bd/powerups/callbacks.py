@@ -25,10 +25,10 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
 
     self._flash_billboard(tex)
     if self.powerups_expire:
-        self.node.mini_billboard_2_texture = tex
+        self.node.mini_billboard_1_texture = tex
         t = ba.time()
-        self.node.mini_billboard_2_start_time = t
-        self.node.mini_billboard_2_end_time = t + powerup_expiration_time
+        self.node.mini_billboard_1_start_time = t
+        self.node.mini_billboard_1_end_time = t + powerup_expiration_time
 
     if self.node.hockey:
         return
@@ -45,7 +45,16 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
 
 @powerup('jetpack', texture='buttonJump', freq=1)
 def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
-    powerup_expiration_time = 20
+    powerup_expiration_time = 5
+
+    tex = ba.gettexture('buttonJump')
+
+    self._flash_billboard(tex)
+    if self.powerups_expire:
+        self.node.mini_billboard_1_texture = tex
+        t = ba.time()
+        self.node.mini_billboard_1_start_time = t
+        self.node.mini_billboard_1_end_time = t + powerup_expiration_time
 
     def _jetpack_wrapper():
         if not self.node.exists():
@@ -78,9 +87,8 @@ def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
 
     def off_jetpack_wrapper():
         if self.node.exists():
-            self._jumpCooldown = 250
-            # А это че?
-            # self.node.getdelegate().getplayer().actor.connectControlsToPlayer()
+            # self._jumpCooldown = 250
+            self.node.getdelegate(playerspaz.PlayerSpaz).connect_controls_to_player()
 
     ba.timer(powerup_expiration_time,
              off_jetpack_wrapper)
