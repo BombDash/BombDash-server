@@ -38,7 +38,7 @@ class Prefix(ba.Actor):
         self._offset = 0
         self._radius = 1
 
-        emit_time = 60 if emit_type in ('sweat', 'spark') else 110
+        emit_time = 0.06 if emit_type in ('sweat', 'spark') else 0.11
         if particle_type != 0:
             self.type_selection_handler_timer = ba.Timer(
                 emit_time,
