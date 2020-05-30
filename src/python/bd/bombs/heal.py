@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 @bomb('heal', impact=True)
 class HealBomb(MeBomb):
     def init(self, actor: stdbomb.Bomb, position, velocity, materials):
-        factory = stdbomb.get_factory()
+        factory = stdbomb.BombFactory.get()
         actor.node = ba.newnode('prop',
                                 delegate=actor,
                                 attrs={

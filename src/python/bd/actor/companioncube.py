@@ -7,6 +7,7 @@ import ba
 
 from bastd.actor import playerspaz
 from bd.locale import get_locale
+from bastd.gameutils import SharedObjects
 
 if TYPE_CHECKING:
     from typing import Sequence, List, Any
@@ -35,6 +36,7 @@ class CompanionCube(ba.Actor):
             25.0, 27.5, 30.0)
 
         self.phrases_time: float = random.choice(self.phrases_times)
+        shared = SharedObjects.get()
 
         self.node: ba.Node = ba.newnode('prop', delegate=self, attrs={
             'body': 'crate',
@@ -45,8 +47,8 @@ class CompanionCube(ba.Actor):
             'velocity': velocity,
             'reflection': 'soft',
             'reflection_scale': [0.25],
-            'materials': (ba.sharedobj('object_material'),
-                          ba.sharedobj('footing_material'))})
+            'materials': (shared.object_material,
+                          shared.footing_material)})
         ba.animate(self.node, 'model_scale', {0: 0, 0.2: 1.3, 0.26: 1})
 
         self.spawn_random_phrase_timer: ba.Timer = ba.Timer(

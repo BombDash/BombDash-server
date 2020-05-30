@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any
 
 import ba
 from bastd.actor import bomb as stdbomb
+from bastd.gameutils import SharedObjects
 from bd.me import bomb, MeBomb
 from bd.actor import AutoAim
 
@@ -28,7 +29,8 @@ class StickyGiftFactory:
         return factory
 
     def __init__(self):
-        bomb_factory = stdbomb.get_factory()
+        bomb_factory = stdbomb.BombFactory.get()
+        shared = SharedObjects.get()
         self.sticky_gift_material = ba.Material()
         self.sticky_gift_material.add_actions(
             conditions=(
@@ -36,8 +38,8 @@ class StickyGiftFactory:
                 ('they_are_older_than', 200), 'and',
                 ('eval_colliding',), 'and',
                 (('they_dont_have_material', bomb_factory.land_mine_no_explode_material), 'and',
-                 (('they_have_material', ba.sharedobj('object_material')), 'or',
-                  ('they_have_material', ba.sharedobj('player_material'))))),
+                 (('they_have_material', shared.object_material), 'or',
+                  ('they_have_material', shared.player_material)))),
             actions=(
                 ('message', 'our_node',
                  'at_connect', SetStickyMessage())))
@@ -88,8 +90,9 @@ class StickyGift(MeBomb):
 
     @staticmethod
     def on_sticky_gift(actor: stdbomb.Bomb, node: ba.Node) -> None:
+        shared = SharedObjects.get()
         if (actor.node and node is not actor.owner and
-                ba.sharedobj('player_material') in node.materials):
+                shared.player_material in node.materials):
             actor.node.sticky = True
 
             def wrapper():

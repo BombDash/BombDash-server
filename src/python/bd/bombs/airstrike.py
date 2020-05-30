@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 @bomb('airstrike', impact=True)
 class AirstrikeBomb(MeBomb):
     def init(self, actor: stdbomb.Bomb, position, velocity, materials):
-        factory = stdbomb.get_factory()
+        factory = stdbomb.BombFactory.get()
         actor.node = ba.newnode('prop', delegate=actor, attrs={
             'body': 'sphere',
             'model': factory.impact_bomb_model,

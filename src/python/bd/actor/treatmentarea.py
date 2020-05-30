@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import ba
+from bastd.gameutils import SharedObjects
 
 if TYPE_CHECKING:
     from typing import Sequence, List
@@ -24,9 +25,10 @@ class TreatmentArea(ba.Actor):
         self.cured_nodes: List[ba.Node] = []
 
         self.area_material: ba.Material = ba.Material()
+        shared = SharedObjects.get()
         self.area_material.add_actions(
             conditions=(('they_have_material',
-                         ba.sharedobj('player_material'))),
+                         shared.player_material)),
             actions=(('modify_part_collision', 'collide', True),
                      ('modify_part_collision', 'physical', False),
                      ('call', 'at_connect', self._touch_handler)))

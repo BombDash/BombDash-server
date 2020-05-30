@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 import ba
 import bastd.actor.spaz as stdspaz
 import bastd.actor.bomb as stdbomb
+from bastd.gameutils import SharedObjects
 from bastd.actor import powerupbox
 from bastd.actor.powerupbox import DEFAULT_POWERUP_INTERVAL
 
@@ -205,7 +206,7 @@ class PowerupBox(ba.Actor):
                 'reflection': 'powerup',
                 'reflection_scale': [1.0],
                 'materials': (factory.powerup_material,
-                              ba.sharedobj('object_material'))
+                              SharedObjects.get().object_material)
             })  # yapf: disable
 
         # Animate in.

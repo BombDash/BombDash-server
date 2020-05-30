@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class ElonMine(MeBomb):
     def init(self, actor: stdbomb.Bomb, position: Sequence[Union[int, float]],
              velocity: Sequence[Union[int, float]], materials: Sequence[ba.Material]):
-        factory = stdbomb.get_factory()
+        factory = stdbomb.BombFactory.get()
         actor.node = ba.newnode('prop', delegate=actor, attrs={
             'body': 'landMine',
             'model': factory.land_mine_model,

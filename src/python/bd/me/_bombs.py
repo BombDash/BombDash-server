@@ -6,7 +6,8 @@ from typing import TYPE_CHECKING
 import random
 import ba
 from bastd.actor import bomb as stdbomb
-from bastd.actor.bomb import BombFactory, ExplodeMessage, get_factory
+from bastd.actor.bomb import BombFactory, ExplodeMessage
+from bastd.gameutils import SharedObjects
 from ._redefine import redefine_class_methods, redefine_flag, RedefineFlag
 
 if TYPE_CHECKING:
@@ -123,7 +124,8 @@ class Bomb(ba.Actor):
 
         ba.Actor.__init__(self)
 
-        factory = get_factory()
+        factory = BombFactory.get()
+        shared = SharedObjects.get()
         self.bomb_type = bomb_type
         self._exploded = False
         self.texture_sequence = None
@@ -132,7 +134,7 @@ class Bomb(ba.Actor):
         self._explode_callbacks = []
 
         # the player this came from
-        self.source_player = source_player
+        self._source_player = source_player
 
         # by default our hit type/subtype is our own, but we pick up types of
         # whoever sets us off so we know what caused a chain reaction
@@ -153,7 +155,7 @@ class Bomb(ba.Actor):
         # ground.. perhaps we don't wanna add this even in the tnt case?..
         materials: tuple
         materials = (factory.bomb_material,
-                     ba.sharedobj('object_material'))
+                     shared.object_material)
 
         if mebomb.is_impact:
             materials = materials + (factory.impact_blast_material,)
@@ -191,7 +193,7 @@ class Bomb(ba.Actor):
         """
         if not self.node:
             return
-        factory = get_factory()
+        factory = BombFactory.get()
         mebomb: Optional[MeBomb] = get_mebomb(self.bomb_type)
         if mebomb is None:
             old_function(self)
@@ -303,7 +305,7 @@ class Blast(ba.Actor):
 
         ba.Actor.__init__(self)
 
-        factory = get_factory()
+        factory = BombFactory.get()
 
         self.blast_type = blast_type
         self.source_player = source_player

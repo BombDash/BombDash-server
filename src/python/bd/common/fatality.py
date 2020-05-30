@@ -78,7 +78,7 @@ class Spaz(ba.Actor):
                         position=self.node.position,
                         radius=3)
 
-                    gnode = ba.sharedobj('globals')
+                    gnode = self.activity.globalsnode
 
                     if not gnode.slow_motion:
                         gnode.slow_motion = True
@@ -113,7 +113,7 @@ class Spaz(ba.Actor):
         return returned
 
     def lightning_bolt(self, position=(0, 10, 0), radius=10):
-        tint = ba.sharedobj('globals').tint
+        tint = self.activity.globalsnode.tint
 
         sounds = ('impactHard', 'impactHard2', 'impactHard3')
         ba.playsound(ba.getsound(
@@ -137,5 +137,5 @@ class Spaz(ba.Actor):
         }
 
         ba.animate(light, 'intensity', intensity)
-        ba.animate_array(ba.sharedobj('globals'), 'tint', 3,
+        ba.animate_array(self.activity.globalsnode, 'tint', 3,
                          {0: tint, 0.2: (0.2, 0.2, 0.2), 0.51: tint})

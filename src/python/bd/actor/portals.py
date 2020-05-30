@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import ba
+from bastd.gameutils import SharedObjects
 
 if TYPE_CHECKING:
     from typing import Sequence, List, Any
@@ -42,9 +43,10 @@ class Portals(ba.Actor):
 
         # portal materials
         self.first_portal_material = ba.Material()
+        shared = SharedObjects.get()
         self.first_portal_material.add_actions(
             conditions=(('they_have_material',
-                         ba.sharedobj('player_material'))),
+                         shared.player_material)),
             actions=(('modify_part_collision', 'collide', True),
                      ('modify_part_collision', 'physical', False),
                      ('call', 'at_connect',
@@ -52,9 +54,9 @@ class Portals(ba.Actor):
 
         self.first_portal_material.add_actions(
             conditions=(('they_have_material',
-                         ba.sharedobj('object_material')),
+                         shared.player_material),
                         'and', ('they_dont_have_material',
-                                ba.sharedobj('player_material'))),
+                                shared.player_material)),
             actions=(('modify_part_collision', 'collide', True),
                      ('modify_part_collision', 'physical', False),
                      ('call', 'at_connect', self._first_portal_handler)))
@@ -62,7 +64,7 @@ class Portals(ba.Actor):
         self.second_portal_material = ba.Material()
         self.second_portal_material.add_actions(
             conditions=(('they_have_material',
-                         ba.sharedobj('player_material'))),
+                         shared.player_material)),
             actions=(('modify_part_collision', 'collide', True),
                      ('modify_part_collision', 'physical', False),
                      ('call', 'at_connect',
@@ -70,9 +72,9 @@ class Portals(ba.Actor):
 
         self.second_portal_material.add_actions(
             conditions=(('they_have_material',
-                         ba.sharedobj('object_material')),
+                         shared.object_material),
                         'and', ('they_dont_have_material',
-                                ba.sharedobj('player_material'))),
+                                shared.player_material)),
             actions=(('modify_part_collision', 'collide', True),
                      ('modify_part_collision', 'physical', False),
                      ('call', 'at_connect', self._second_portal_handler)))

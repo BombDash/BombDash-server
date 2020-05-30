@@ -315,7 +315,7 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
             if not hasattr(activity, 'botset'):
                 activity.botset = botset = stdbot.SpazBotSet()
             botset = activity.botset
-            aoi_bounds = ba.sharedobj('globals').area_of_interest_bounds
+            aoi_bounds = self.activity.globalsnode.area_of_interest_bounds
             botset.spawn_bot(stdbot.BrawlerBotLite,
                              (random.randrange(int(aoi_bounds[0]), int(aoi_bounds[3]) + 1),
                               aoi_bounds[4] - 1,
@@ -324,7 +324,7 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
 
         def lightning_bolt(position, radius=1):
             ba.camerashake(4)
-            vignette_outer = ba.sharedobj('globals').vignette_outer
+            vignette_outer = self.activity.globalsnode.vignette_outer
             # if ba.getactivity().tint is None:
             #     ba.getactivity().std_tint = ba.sharedobj('globals').vignette_outer
             #     vignette_outer = ba.sharedobj('globals').vignette_outer
@@ -348,7 +348,7 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
                 timeformat=ba.TimeFormat.MILLISECONDS,
                 suppress_format_warning=True)
 
-            ba.animate_array(ba.sharedobj('globals'), 'vignette_outer', 3, {
+            ba.animate_array(self.activity.globalsnode, 'vignette_outer', 3, {
                 0: vignette_outer, 0.2: (0.2, 0.2, 0.2), 0.51: vignette_outer})
 
             # ba.playsound(
