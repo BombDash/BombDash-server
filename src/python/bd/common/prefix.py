@@ -24,7 +24,7 @@ class Prefix(ba.Actor):
             prefix_offset=(0, 1.75, 0),
             prefix_animation=(-65528, -16713473, -15335680),
             emit_type='spark',
-            particle_type=0):
+            particle_type=1):
         super().__init__()
         self.owner = owner
         self.prefix_text = prefix_text

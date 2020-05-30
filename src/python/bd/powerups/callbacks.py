@@ -131,7 +131,7 @@ def portal_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     self.inc_bomb_count('portal_bomb')
 
 
-@powerup('sticky_gift_bomb', 'achievementCrossHair', freq=1, bomb_type='sticky_gift')
+@powerup('sticky_gift_bombs', 'achievementCrossHair', freq=1, bomb_type='sticky_gift')
 def portal_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     self.inc_bomb_count('sticky_gift')
 
