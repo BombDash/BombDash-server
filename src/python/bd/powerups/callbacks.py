@@ -20,15 +20,6 @@ if TYPE_CHECKING:
 
 @powerup('speed', texture='powerupSpeed', freq=1)
 def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
-    # if ba.app.config.get('Powerup Popups', True):
-    #     powerup_text = get_locale(
-    #         'powerup_names')['speed']
-    #
-    #     PopupText(
-    #         ba.Lstr(translate=('gameDescriptions', powerup_text)),
-    #         color=(1, 1, 1),
-    #         scale=1,
-    #         position=self.node.position).autoretain()
     powerup_expiration_time = 10
     tex = ba.gettexture('powerupSpeed')
 
@@ -140,18 +131,6 @@ def portal_bombs_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
 @powerup('lucky_block', 'achievementEmpty', freq=2)
 def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
     event_number = random.randint(1, 15)
-    # event_number = 15
-    # if event_number not in (1, 2, 3, 4):
-    #     if ba.app.config.get('Powerup Popups', True):
-    #         powerup_text = get_locale(
-    #             'powerup_names')['lucky_block']
-    #
-    #         PopupText(
-    #             ba.Lstr(translate=('gameDescriptions',
-    #                                powerup_text)),
-    #             color=(1, 1, 1),
-    #             scale=1,
-    #             position=self.node.position).autoretain()
 
     if event_number in (1, 2, 3):
         powerup_type = stdpowerup.PowerupBoxFactory(

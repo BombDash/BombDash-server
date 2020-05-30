@@ -6,9 +6,11 @@ from typing import TYPE_CHECKING
 import ba
 import bastd.actor.spaz as stdspaz
 import bastd.actor.bomb as stdbomb
+from bastd.actor.popuptext import PopupText
 from bastd.gameutils import SharedObjects
 from bastd.actor import powerupbox
 from bastd.actor.powerupbox import DEFAULT_POWERUP_INTERVAL
+from bd.locale import get_locale  # Хмм, ну бывает, ну me же часть bd, почему бы и нет (ну не бейте пж)
 
 from ._redefine import redefine_class_methods, redefine_flag, RedefineFlag
 
@@ -52,6 +54,16 @@ class Spaz(ba.Actor):
                 return
             for poweruptype, texture, callback in _callbacks:
                 if msg.poweruptype == poweruptype:
+                    if ba.app.config.get('Powerup Popups', True):
+                        powerup_text = get_locale(
+                            'powerup_names')[poweruptype]
+
+                        PopupText(
+                            ba.Lstr(translate=('gameDescriptions',
+                                               powerup_text)),
+                            color=(1, 1, 1),
+                            scale=1,
+                            position=self.node.position).autoretain()
                     callback(self, msg)
 
     @redefine_flag(RedefineFlag.REDEFINE)
