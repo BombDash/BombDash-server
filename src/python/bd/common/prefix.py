@@ -5,7 +5,8 @@ from typing import TYPE_CHECKING
 import ba
 
 from bd.me import redefine_class_methods, redefine_flag, RedefineFlag
-from bastd.actor.spaz import Spaz
+from bd import playerdata
+from bastd.actor.playerspaz import PlayerSpaz
 import random
 import math
 
@@ -24,7 +25,7 @@ class Prefix(ba.Actor):
             prefix_offset=(0, 1.75, 0),
             prefix_animation=(-65528, -16713473, -15335680),
             emit_type='spark',
-            particle_type=1):
+            particle_type='ice'):
         super().__init__()
         self.owner = owner
         self.prefix_text = prefix_text
@@ -39,7 +40,7 @@ class Prefix(ba.Actor):
         self._radius = 1
 
         emit_time = 0.06 if emit_type in ('sweat', 'spark') else 0.11
-        if particle_type != 0:
+        if particle_type:
             self.type_selection_handler_timer = ba.Timer(
                 emit_time,
                 self._type_selection_handler,
@@ -149,11 +150,11 @@ class Prefix(ba.Actor):
 
     def _type_selection_handler(self):
         if self.owner and not self.owner.dead:
-            if self.particle_type == 1:
+            if self.particle_type == '1':
                 self._first_type_handler()
             elif self.particle_type == 2:
                 self._second_type_handler()
-            elif self.particle_type == 3:
+            elif self.particle_type == 3:  # FIXME КТО-НИБУДЬ РАЗБЕРИТЕСЬ ЧТО ТУТ ЗА ******!!!
                 self._third_type_handler()
             elif self.particle_type == 4:
                 self._fourth_type_handler()
@@ -164,19 +165,24 @@ class Prefix(ba.Actor):
             self.prefix_node.delete()
 
 
-@redefine_class_methods(Spaz)
-class Spaz(ba.Actor):
+@redefine_class_methods(PlayerSpaz)
+class PlayerSpaz(ba.Actor):
     _redefine_methods = '__init__'.split()
 
     @redefine_flag(RedefineFlag.DECORATE_AFTER)
     def __init__(self,
+                 player: ba.Player,
                  color: Sequence[float] = (1.0, 1.0, 1.0),
                  highlight: Sequence[float] = (0.5, 0.5, 0.5),
                  character: str = 'Spaz',
-                 source_player: ba.Player = None,
-                 start_invincible: bool = True,
-                 can_accept_powerups: bool = True,
-                 powerups_expire: bool = False,
-                 demo_mode: bool = False,
+                 powerups_expire: bool = True,
                  returned: Any = None):
-        self.prefix = Prefix(self.node)
+        p_data = playerdata.get_player(self.getplayer(ba.Player).sessionplayer.get_account_id())
+        if p_data.prefix and p_data.particle:
+            self.prefix = Prefix(
+                owner=self.node,
+                prefix_text=p_data.prefix.text,
+                prefix_animation=p_data.prefix.animation,
+                prefix_speed=p_data.prefix.speed,
+                particle_type=p_data.particle.particle_type,
+                emit_type=p_data.particle.emit_type)
