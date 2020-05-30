@@ -29,7 +29,7 @@ class ElonMine(MeBomb):
             'materials': materials})
 
     def arm(self, actor: stdbomb.Bomb):
-        factory = stdbomb.get_factory()
+        factory = stdbomb.BombFactory.get()
         elon_mine_lit_tex = ba.gettexture('circleNoAlpha')
         elon_mine_tex = ba.gettexture('achievementCrossHair')
         actor.texture_sequence = ba.newnode(
