@@ -51,10 +51,9 @@ class Airstrike(ba.Actor):
     def _drop_bomb(self):
         """Drop a certain amount of bombs."""
         if self.drop_count < self.amount:
-            highest_pos = self.position[1] + 3
             activity = ba.getactivity()
-            if isinstance(activity, ba.GameActivity):
-                highest_pos = activity.map.get_def_bound_box('area_of_interest_bounds')[4]
+            assert isinstance(activity, ba.GameActivity)
+            highest_pos = activity.map.get_def_bound_box('map_bounds')[4]
             drop_position = (
                 self.position[0] + random.uniform(1.5, -1.5),
                 highest_pos,
@@ -62,7 +61,7 @@ class Airstrike(ba.Actor):
 
             stdbomb.Bomb(bomb_type=self.bomb_type,
                          position=drop_position,
-                         blast_radius=1,
+                         blast_radius=3,
                          velocity=self.velocity).autoretain()
 
             self.drop_count += 1
