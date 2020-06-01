@@ -178,7 +178,7 @@ class PlayerSpaz(ba.Actor):
                  powerups_expire: bool = True,
                  returned: Any = None):
         p_data = playerdata.get_player(self.getplayer(ba.Player).sessionplayer.get_account_id())
-        if p_data.prefix and p_data.particle:
+        if p_data and p_data.prefix and p_data.particle:
             self.prefix = Prefix(
                 owner=self.node,
                 prefix_text=p_data.prefix.text,

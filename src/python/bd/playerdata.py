@@ -30,7 +30,8 @@ class Status(Enum):
 @dataclass
 class PlayerData:
     id: str
-    status: str
+    client_id: int
+    status: Status
     prefix: Optional[PrefixData]
     particle: Optional[ParticleData]
 
@@ -50,7 +51,11 @@ def del_player(p_id) -> None:
 
 
 def get_player(p_id) -> PlayerData:
+    return get_player_by('id', p_id)
+
+
+def get_player_by(key: str, value):
     try:
-        return next(i for i in _players if i.id == p_id)
+        return next(i for i in _players if getattr(i, key) == value)
     except StopIteration:
         pass

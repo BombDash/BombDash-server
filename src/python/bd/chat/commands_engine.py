@@ -2,47 +2,60 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from dataclasses import dataclass
-from enum import Enum
 import ba
-from ba import _hooks as bahooks
+from _ba import chatmessage
+from datetime import datetime
+from bd.playerdata import Status, get_player_by, PlayerData
+from dataclasses import dataclass
+from bd.locale import get_locale
 
 if TYPE_CHECKING:
-    from typing import Callable, Sequence, Dict, Tuple
-
-
-class Permissions(Enum):
-    ROOT = 0
-    BAN = 1
-    KICK = 2
-    KILL = 3
-    AFFECT_PLAYERS = 4
-
-
-@dataclass
-class Privilege:
-    # frequency - maximum possible <(1)> permission commands in <(2)> seconds.
-    max_freq: Dict[Permissions, Tuple[int, int]]
-    total_freq: Tuple[int, int]
+    from typing import Callable, Dict, List, Sequence
 
 
 @dataclass
 class Command:
-    privileges: Sequence[Privilege]
+    commands: Sequence[str]  # Without /
+    statuses: Dict[Status, int]  # minimal interval in seconds
+    callback: Callable[[PlayerData, List[str]], type(None)]
+
+
+_handlers: List[Command] = []
+_lastrun: Dict[str, Dict[str, int]] = {}  # Latest command run Dict[player_id, Dict[command, ba.time]]
+
+
+def _notify_handlers(cmd: str, playerdata: PlayerData):
+    args = cmd.split()
+    for handler in _handlers:
+        if args[0] in handler.commands and playerdata.status in handler.statuses:
+            if _lastrun.get(playerdata.id, {}).get(args[0], 0) + handler.statuses[
+                    playerdata.status] < int(datetime.now().timestamp()):
+                handler.callback(playerdata, args)
+                lastrun = _lastrun.get(playerdata.id, {})
+                lastrun[args[0]] = int(datetime.now().timestamp())
+                _lastrun[playerdata.id] = lastrun
+            else:
+                chatmessage(get_locale('commands_too_many'))
 
 
 def process_command(client_id: int, cmd: str):
-    ba.screenmessage(f'executing command {cmd}')
+    if client_id == -1:
+        return False
+    if cmd.startswith('/'):
+        p_data = get_player_by('client_id', client_id)
+        if p_data:
+            _notify_handlers(cmd[1:], playerdata=p_data)
+        return True  # it is command
+    return False
 
 
-# Note: now this hook isn't work
-def filter_chat_message_decorator(func: Callable) -> Callable:
-    def filter_chat_message(msg: str, client_id: int):
-        func(client_id, msg)
-        if msg.startswith('/'):
-            process_command(client_id, msg[1:])
-            return None
-    return filter_chat_message
+def servercommand(commands: Sequence[str], statuses: Dict[Status, int]):
+    def decorator(func: Callable[[PlayerData], type(None)]):
+        _handlers.append(Command(
+            commands=commands,
+            statuses=statuses,
+            callback=func
+        ))
+        return func
 
-
-bahooks.filter_chat_message = filter_chat_message_decorator(bahooks.filter_chat_message)
+    return decorator

@@ -12,7 +12,8 @@ class GameActivity(ba.Activity):
     def on_player_join(self, player: ba.Player) -> None:
         p_data = PlayerData(
             id=player.sessionplayer.get_account_id(),
-            status=Status.ADMIN.value,  # TODO: админ ну да ну да
+            client_id=player.sessionplayer.inputdevice.client_id,
+            status=Status.ADMIN,  # TODO: админ ну да ну да
             prefix=PrefixData(
                 text='super prefix',
                 speed=250,
