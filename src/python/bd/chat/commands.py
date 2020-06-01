@@ -17,67 +17,57 @@ def help_callback(playerdata: PlayerData, args):
                 get_locale('command_help_not_found'))))
 
 
-# commands handlers for admins and VIP's
 @servercommand('list l'.split(), {Status.ADMIN: 0, Status.VIP: 0})
 def list_callback(playerdata: PlayerData, args):
     client_ids = [(
         i['players'][0]['name_full'] if i['players'] else
-        i['display_string'], str(i['clientID']))
+        i['displayString'], str(i['client_id']))
         for i in _ba.get_game_roster()]
 
     chatmessage(get_locale('player_ids_text'))
     activity = _ba.get_foreground_host_activity()
     for i in range(len(activity.players)):
         p = activity.players[i]
-        chatmessage('{} | {} | {}'.format(i, p.getname(), p.sessionplayer.inputdevice.client_id))
+        chatmessage('{} | {} | {}'.format(i, p.getname().ljust(15), p.sessionplayer.inputdevice.client_id))
     chatmessage(get_locale('dividing_strip_text'))
 
 
-# @servercommand('kick'.split(), {Status.ADMIN: 0, Status.VIP: 60})
-# def kick_callback(playerdata: PlayerData, args: List[str]):
-#     if not args or (not args[0].isdigit() and args[0] != '-1'):
-#         chatmessage(get_locale('chat_command_not_args_error'))
-#     elif args[0] == '-1':
-#         chatmessage(get_locale('kick_host_error'))
-#     else:
-#         ban_time = 300
-#         clients_ids = [pla for player in
-#                        baInternal._getGameRoster()]
-#
-#         if len(args) > 1 and status == 'admin':
-#             ban_time = int(args[1])
-#         elif len(args) > 1 and status != 'admin':
-#             send_locale_message('time_arg_access_error')
-#
-#         if int(args[0]) in clients_ids:
-#             baInternal._disconnectClient(int(args[0]),
-#                                          banTime=ban_time)
-#         else:
-#             send_locale_message('not_player_error')
-#
-#
-# @bd.server.chat.message_handler(commands=('/remove',),
-#                                 statuses=('vip', 'admin'))
-# def remove_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     elif args[0] == 'all':
-#         for i in activity.players:
-#             try:
-#                 i.removeFromGame()
-#             except Exception:
-#                 pass
-#     elif args[0] == 'device':
-#         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
-#                 False).encode('utf-8')
-#
-#             if account_name == args[1]:
-#                 i.removeFromGame()
-#     else:
-#         activity.players[int(args[0])].removeFromGame()
-#
-#
+@servercommand('kick'.split(), {Status.ADMIN: 0, Status.VIP: 60})
+def kick_callback(playerdata: PlayerData, args):
+    if len(args) < 2 or (not args[1].isdigit() and args[1] != '-1'):
+        chatmessage(get_locale('chat_command_not_args_error'))
+    elif args[1] == '-1':
+        chatmessage(get_locale('kick_host_error'))
+    else:
+        ban_time = 300
+        clients_ids = [player['client_id'] for player in
+                       _ba.get_game_roster()]
+
+        if len(args) > 1 and playerdata.status == Status.ADMIN:
+            ban_time = int(args[1])
+        elif len(args) > 1 and playerdata.status != Status.ADMIN:
+            chatmessage(get_locale('time_arg_access_error'))
+
+        if int(args[1]) in clients_ids:
+            _ba.disconnect_client(int(args[1]),
+                                  ban_time=ban_time)
+        else:
+            chatmessage(get_locale('not_player_error'))
+
+
+@servercommand('remove'.split(), {Status.ADMIN: 0, Status.VIP: 60})
+def remove_handler(playerdata: PlayerData, args):
+    raise Exception()
+    activity = _ba.get_foreground_host_activity()
+    if len(args) < 2:
+        chatmessage(get_locale('chat_command_not_args_error'))
+    elif args[0] == 'all':
+        for player in activity.players:
+            player.sessionplayer.remove_from_game()
+    else:
+        activity.players[int(args[0])].sessionplayer.remove_from_game()
+
+
 # @bd.server.chat.message_handler(commands=('/end',),
 #                                 statuses=('vip', 'admin'))
 # def end_handler(activity, args, status, client_id):

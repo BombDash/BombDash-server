@@ -30,7 +30,11 @@ def _notify_handlers(cmd: str, playerdata: PlayerData):
         if args[0] in handler.commands and playerdata.status in handler.statuses:
             if _lastrun.get(playerdata.id, {}).get(args[0], 0) + handler.statuses[
                     playerdata.status] < int(datetime.now().timestamp()):
-                handler.callback(playerdata, args)
+                try:
+                    handler.callback(playerdata, args)
+                except Exception:
+                    ba.print_exception(f'Error while processing command {cmd} from {playerdata.id}')
+                    chatmessage(get_locale('command_some_error'))
                 lastrun = _lastrun.get(playerdata.id, {})
                 lastrun[args[0]] = int(datetime.now().timestamp())
                 _lastrun[playerdata.id] = lastrun
