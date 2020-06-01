@@ -25,12 +25,14 @@
       <w>ispunch</w>
       <w>jetpack</w>
       <w>kickvote</w>
+      <w>lastrun</w>
       <w>mapdata</w>
       <w>meblast</w>
       <w>mebomb</w>
       <w>miniblast</w>
       <w>mypy</w>
       <w>nodename</w>
+      <w>playerdata</w>
       <w>powersgiven</w>
       <w>powerup</w>
       <w>powerupbox</w>
@@ -44,6 +46,7 @@
       <w>pylint</w>
       <w>pytest</w>
       <w>pythonpath</w>
+      <w>servercommand</w>
       <w>spaz</w>
       <w>stdbomb</w>
       <w>stdbot</w>

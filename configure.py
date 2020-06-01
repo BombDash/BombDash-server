@@ -30,7 +30,7 @@ def build(build_type, only_copy=False):
         run(f'cd ballistica && make prefab-server-{build_type}-build')
         run(f'rm -rf {build_type}')
         run(f'cp -r ballistica/build/prefab/linux-server/{build_type}/ .')
-    run(f'cp -r ../src/* {build_type}/dist/ba_data/')
+    run(f'cp -rf ../src/* {build_type}/dist/ba_data/')
     os.chdir('..')
 
 
