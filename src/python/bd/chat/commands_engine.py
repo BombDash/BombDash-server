@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import ba
-from _ba import chatmessage
+from _ba import chatmessage, get_foreground_host_activity
 from datetime import datetime
 from bd.playerdata import Status, get_player_by, PlayerData
 from dataclasses import dataclass
@@ -31,7 +31,8 @@ def _notify_handlers(cmd: str, playerdata: PlayerData):
             if _lastrun.get(playerdata.id, {}).get(args[0], 0) + handler.statuses[
                     playerdata.status] < int(datetime.now().timestamp()):
                 try:
-                    handler.callback(playerdata, args)
+                    with ba.Context(get_foreground_host_activity()):
+                        handler.callback(playerdata, args)
                 except Exception:
                     ba.print_exception(f'Error while processing command {cmd} from {playerdata.id}')
                     chatmessage(get_locale('command_some_error'))

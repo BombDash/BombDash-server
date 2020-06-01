@@ -57,47 +57,43 @@ def kick_callback(playerdata: PlayerData, args):
 
 @servercommand('remove'.split(), {Status.ADMIN: 0, Status.VIP: 60})
 def remove_handler(playerdata: PlayerData, args):
-    raise Exception()
-    activity = _ba.get_foreground_host_activity()
+    activity = ba.getactivity()
     if len(args) < 2:
         chatmessage(get_locale('chat_command_not_args_error'))
-    elif args[0] == 'all':
+    elif args[0] == 'all' and playerdata.status == Status.ADMIN:
         for player in activity.players:
             player.sessionplayer.remove_from_game()
     else:
         activity.players[int(args[0])].sessionplayer.remove_from_game()
 
 
-# @bd.server.chat.message_handler(commands=('/end',),
-#                                 statuses=('vip', 'admin'))
-# def end_handler(activity, args, status, client_id):
-#     activity.end_game()
-#
-#
-# @bd.server.chat.message_handler(commands=('/ooh', '/o'),
-#                                 statuses=('vip', 'admin'))
-# def ooh_handler(activity, args, status, client_id):
-#     ba.playsound(ba.getsound('ooh'), volume=2)
-#
-#
-# @bd.server.chat.message_handler(commands=('/playSound', '/ps'),
-#                                 statuses=('vip', 'admin'))
-# def play_sound_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     else:
-#         ba.playsound(ba.getsound(str(args[0])), volume=2)
-#
-#
-# @bd.server.chat.message_handler(commands=('/nv',),
-#                                 statuses=('vip', 'admin'))
-# def nv_handler(activity, args, status, client_id):
-#     tint = {0: ba.sharedobj('globals').tint,
-#             1000: (0.5, 0.7, 1.0)}
-#
-#     ba.animateArray(ba.sharedobj('globals'), 'tint', 3, tint)
-#
-#
+@servercommand('end'.split(), {Status.ADMIN: 0, Status.VIP: 120})
+def end_handler(playerdata: PlayerData, args):
+    activity = ba.getactivity()
+    activity.end()
+
+
+@servercommand('ooh'.split(), {Status.ADMIN: 0, Status.VIP: 60})
+def ooh_handler(playerdata: PlayerData, args):
+    ba.playsound(ba.getsound('ooh'), volume=2)
+
+
+@servercommand('playsound ps'.split(), {Status.ADMIN: 0, Status.VIP: 0})
+def play_sound_handler(playerdata: PlayerData, args):
+    if len(args) < 2:
+        chatmessage(get_locale('chat_command_not_args_error'))
+    else:
+        ba.playsound(ba.getsound(str(args[0])), volume=2)
+
+
+@servercommand('nv'.split(), {Status.ADMIN: 0, Status.VIP: 0})
+def nv_handler(playerdata: PlayerData, args):
+    activity = ba.getactivity()
+    tint = {0: activity.globalsnode.tint,
+            1: (0.5, 0.7, 1.0)}
+    ba.animate_array(activity.globalsnode, 'tint', 3, tint)
+
+
 # @bd.server.chat.message_handler(commands=('/dv',),
 #                                 statuses=('vip', 'admin'))
 # def dv_handler(activity, args, status, client_id):
