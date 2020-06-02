@@ -8,7 +8,7 @@ from bd.locale import get_locale
 @redefine_class_methods(ba.Chooser)
 class Chooser:
     _redefine_methods = ('_gcinit', '_get_glowing_colors', 'update_from_profile',
-                         '_get_name')
+                         '_getname')
 
     def _gcinit(self):
         if hasattr(self, '_gcinit_done'):
@@ -44,7 +44,7 @@ class Chooser:
                 transient=True)
 
     @redefine_flag(RedefineFlag.DECORATE_ADVANCED)
-    def _get_name(self, full=True, old_function=None):
+    def _getname(self, full=True, old_function=None):
         name = old_function(self, full)
         for m in self._markers:
             name = name.replace(m, '')

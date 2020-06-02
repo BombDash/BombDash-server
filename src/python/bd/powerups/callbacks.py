@@ -45,7 +45,7 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
 
 @powerup('jetpack', texture='buttonJump', freq=1)
 def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
-    powerup_expiration_time = 5
+    powerup_expiration_time = 10
 
     tex = ba.gettexture('buttonJump')
 
@@ -82,7 +82,7 @@ def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
 
         # self._turboFilterAddPress('jump')  # Это че?
 
-    self.node.getdelegate(playerspaz.PlayerSpaz).getplayer(ba.Player).assign_input_call(
+    self.node.getdelegate(playerspaz.PlayerSpaz).getplayer(ba.Player).assigninput(
         'jumpPress', jetpack_wrapper)
 
     def off_jetpack_wrapper():

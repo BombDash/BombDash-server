@@ -86,7 +86,7 @@ class Spaz(ba.Actor):
                         def off_sm():
                             if gnode:
                                 gnode.slow_motion = False
-                        ba.timer(0.25, off_sm)
+                        ba.timer(0.5, off_sm)
 
                 elif 800 < damage < 999:
                     PopupText(
