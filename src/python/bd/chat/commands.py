@@ -59,7 +59,7 @@ def kick_callback(playerdata: PlayerData, args):
 
 
 @servercommand('remove'.split(), {Status.ADMIN: 0, Status.VIP: 60})
-def remove_handler(playerdata: PlayerData, args):
+def remove_callback(playerdata: PlayerData, args):
     activity = ba.getactivity()
     if len(args) < 2:
         chatmessage(get_locale('chat_command_not_args_error'))
@@ -71,19 +71,19 @@ def remove_handler(playerdata: PlayerData, args):
 
 
 @servercommand('end'.split(), {Status.ADMIN: 0, Status.VIP: 120})
-def end_handler(playerdata: PlayerData, args):
+def end_callback(playerdata: PlayerData, args):
     activity = ba.getactivity()
     assert isinstance(activity, ba.GameActivity)
     activity.end_game()
 
 
 @servercommand('ooh'.split(), {Status.ADMIN: 0, Status.VIP: 60})
-def ooh_handler(playerdata: PlayerData, args):
+def ooh_callback(playerdata: PlayerData, args):
     ba.playsound(ba.getsound('ooh'), volume=2)
 
 
 @servercommand('playsound ps'.split(), {Status.ADMIN: 0, Status.VIP: 0})
-def play_sound_handler(playerdata: PlayerData, args):
+def play_sound_callback(playerdata: PlayerData, args):
     if len(args) < 2:
         chatmessage(get_locale('chat_command_not_args_error'))
     else:
@@ -91,338 +91,276 @@ def play_sound_handler(playerdata: PlayerData, args):
 
 
 @servercommand('nv'.split(), {Status.ADMIN: 0, Status.VIP: 0})
-def nv_handler(playerdata: PlayerData, args):
+def nv_callback(playerdata: PlayerData, args):
     activity = ba.getactivity()
     tint = {0: activity.globalsnode.tint,
             1: (0.5, 0.7, 1.0)}
     ba.animate_array(activity.globalsnode, 'tint', 3, tint)
 
 
-# @bd.server.chat.message_handler(commands=('/dv',),
-#                                 statuses=('vip', 'admin'))
-# def dv_handler(activity, args, status, client_id):
-#     tint = {0: ba.sharedobj('globals').tint,
-#             1000: (1.0, 1.0, 1.0)}
-#
-#     ba.animateArray(ba.sharedobj('globals'), 'tint', 3, tint)
-#
-#
-# @bd.server.chat.message_handler(commands=('/box',),
-#                                 statuses=('vip', 'admin'))
-# def box_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     elif args[0] == 'all':
-#         for i in activity.players:
-#             try:
-#                 i.actor.node.torsoModel = ba.getmodel('tnt')
-#                 i.actor.node.colorMaskTexture = ba.gettexture('tnt')
-#                 i.actor.node.colorTexture = ba.gettexture('tnt')
-#                 i.actor.node.highlight = (1, 1, 1)
-#                 i.actor.node.color = (1, 1, 1)
-#                 i.actor.node.headModel = None
-#                 i.actor.node.style = 'cyborg'
-#             except Exception:
-#                 pass
-#     elif args[0] == 'device':
-#         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
-#                 False).encode('utf-8')
-#
-#             if account_name == args[1]:
-#                 i.actor.node.torsoModel = ba.getmodel('tnt')
-#                 i.actor.node.colorMaskTexture = ba.gettexture('tnt')
-#                 i.actor.node.colorTexture = ba.gettexture('tnt')
-#                 i.actor.node.highlight = (1, 1, 1)
-#                 i.actor.node.color = (1, 1, 1)
-#                 i.actor.node.headModel = None
-#                 i.actor.node.style = 'cyborg'
-#     else:
-#         activity.players[int(args[0])].actor.node.torsoModel = \
-#             ba.getmodel('tnt')
-#
-#         activity.players[
-#             int(args[0])].actor.node.colorMaskTexture = \
-#             ba.gettexture('tnt')
-#
-#         activity.players[int(args[0])].actor.node.colorTexture = \
-#             ba.gettexture('tnt')
-#
-#         activity.players[int(args[0])].actor.node.highlight = \
-#             (1, 1, 1)
-#
-#         activity.players[int(args[0])].actor.node.color = \
-#             (1, 1, 1)
-#
-#         activity.players[int(args[0])].actor.node.headModel = \
-#             None
-#
-#         activity.players[int(args[0])].actor.node.style = \
-#             'cyborg'
-#
-#
-# @bd.server.chat.message_handler(commands=('/hug',),
-#                                 statuses=('vip', 'admin'))
-# def hug_handler(activity, args, status, client_id):
-#     if not args:
-#         try:
-#             activity.players[0].actor.node.holdNode = \
-#                 activity.players[1].actor.node
-#         except Exception:
-#             pass
-#
-#         try:
-#             activity.players[1].actor.node.holdNode = \
-#                 activity.players[0].actor.node
-#         except Exception:
-#             pass
-#
-#         try:
-#             activity.players[2].actor.node.holdNode = \
-#                 activity.players[3].actor.node
-#         except Exception:
-#             pass
-#
-#         try:
-#             activity.players[3].actor.node.holdNode = \
-#                 activity.players[2].actor.node
-#         except Exception:
-#             pass
-#
-#         try:
-#             activity.players[4].actor.node.holdNode = \
-#                 activity.players[5].actor.node
-#         except Exception:
-#             pass
-#
-#         try:
-#             activity.players[5].actor.node.holdNode = \
-#                 activity.players[4].actor.node
-#         except Exception:
-#             pass
-#
-#         try:
-#             activity.players[6].actor.node.holdNode = \
-#                 activity.players[7].actor.node
-#         except Exception:
-#             pass
-#
-#         try:
-#             activity.players[7].actor.node.holdNode = \
-#                 activity.players[6].actor.node
-#         except Exception:
-#             pass
-#     else:
-#         activity.players[int(args[0])].actor.node.holdNode = \
-#             activity.players[int(args[1])].actor.node
-#
-#
-# @bd.server.chat.message_handler(commands=('/tint',),
-#                                 statuses=('vip', 'admin'))
-# def tint_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     elif args[0] == 'r':
-#         m = 1.3 if args[1] is None else float(args[1])
-#         s = 1000 if args[2] is None else float(args[2])
-#         tint = {
-#             0: (1 * m, 0, 0), s: (0, 1 * m, 0),
-#             s * 2: (0, 0, 1 * m), s * 3: (1 * m, 0, 0)
-#         }
-#
-#         ba.animateArray(ba.sharedobj('globals'),
-#                         'tint', 3, tint, True)
-#     else:
-#         ba.sharedobj('globals').tint = (float(args[0]),
-#                                         float(args[1]),
-#                                         float(args[2]))
-#
-#
-# @bd.server.chat.message_handler(commands=('/sm',),
-#                                 statuses=('vip', 'admin'))
-# def sm_handler(activity, args, status, client_id):
-#     if not ba.sharedobj('globals').slowMotion:
-#         ba.sharedobj('globals').slowMotion = True
-#     else:
-#         ba.sharedobj('globals').slowMotion = False
-#
-#
-# @bd.server.chat.message_handler(commands=('/gp',),
-#                                 statuses=('vip', 'admin'))
-# def gp_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     else:
-#         send_locale_message('player_profiles_text')
-#         profiles = activity.players[int(args[0])].getInputDevice(
-#         )._getPlayerProfiles()
-#
-#         for i in profiles:
-#             try:
-#                 if i.encode('utf-8') == '__account__':
-#                     input_device = activity.players[
-#                         int(args[0])].getInputDevice()
-#
-#                     i = input_device._getAccountName(False)
-#
-#                 baInternal._chatMessage(i)
-#             except Exception:
-#                 pass
-#
-#         send_locale_message('dividing_strip_text')
-#
-#
-# @bd.server.chat.message_handler(commands=('/fly',),
-#                                 statuses=('vip', 'admin'))
-# def fly_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     elif args[0] == 'all':
-#         for i in activity.players:
-#             try:
-#                 i.actor.node.fly = True
-#             except Exception:
-#                 pass
-#     elif args[0] == 'device':
-#         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
-#                 False).encode('utf-8')
-#
-#             if account_name == args[1]:
-#                 i.actor.node.fly = True
-#     else:
-#         if not activity.players[int(args[0])].actor.node.fly:
-#             activity.players[int(args[0])].actor.node.fly = True
-#         else:
-#             activity.players[int(args[0])].actor.node.fly = False
-#
-#
-# @bd.server.chat.message_handler(commands=('/ac',),
-#                                 statuses=('vip', 'admin'))
-# def ac_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     elif args[0] == 'r':
-#         m = 1.3 if args[1] is None else float(args[1])
-#         s = 1000 if args[2] is None else float(args[2])
-#         ambient_color = {
-#             0: (1 * m, 0, 0), s: (0, 1 * m, 0),
-#             s * 2: (0, 0, 1 * m), s * 3: (1 * m, 0, 0)
-#         }
-#
-#         ba.animateArray(ba.sharedobj('globals'),
-#                         'ambientColor', 3, ambient_color, True)
-#     else:
-#         ba.sharedobj('globals').ambientColor = (float(args[0]),
-#                                                 float(args[1]),
-#                                                 float(args[2]))
-#
-#
-# @bd.server.chat.message_handler(commands=('/iceOff', '/io'),
-#                                 statuses=('vip', 'admin'))
-# def ice_off_handler(activity, args, status, client_id):
-#     activity.map.node.materials = [
-#         ba.sharedobj('footingMaterial')]
-#
-#     activity.map.floor.materials = [
-#         ba.sharedobj('footingMaterial')]
-#
-#     activity.map.isHockey = False
-#     for i in activity.players:
-#         try:
-#             i.actor.node.hockey = False
-#         except Exception:
-#             pass
-#
-#
-# @bd.server.chat.message_handler(commands=('/heal',),
-#                                 statuses=('vip', 'admin'))
-# def heal_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     elif args[0] == 'all':
-#         for i in activity.players:
-#             try:
-#                 i.actor.node.handlemessage(
-#                     ba.PowerupMessage(powerupType='health'))
-#             except Exception:
-#                 pass
-#     elif args[0] == 'device':
-#         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
-#                 False).encode('utf-8')
-#
-#             if account_name == args[1]:
-#                 i.actor.node.handlemessage(
-#                     ba.PowerupMessage(powerupType='health'))
-#     else:
-#         activity.players[int(args[0])].actor.node.handlemessage(
-#             ba.PowerupMessage(powerupType='health'))
-#
-#
-# @bd.server.chat.message_handler(commands=('/reflections', '/ref'),
-#                                 statuses=('vip', 'admin'))
-# def reflections_handler(activity, args, status, client_id):
-#     rs = [int(args[1])]
-#     ref_type = 'soft' if int(args[0]) == 0 else 'powerup'
-#
-#     try:
-#         activity.map.node.reflection = ref_type
-#         activity.map.node.reflectionScale = rs
-#     except Exception:
-#         pass
-#
-#     try:
-#         activity.map.bg.reflection = ref_type
-#         activity.map.bg.reflectionScale = rs
-#     except Exception:
-#         pass
-#
-#     try:
-#         activity.map.floor.reflection = ref_type
-#         activity.map.floor.reflectionScale = rs
-#     except Exception:
-#         pass
-#
-#     try:
-#         activity.map.center.reflection = ref_type
-#         activity.map.center.reflectionScale = rs
-#     except Exception:
-#         pass
-#
-#
-# @bd.server.chat.message_handler(commands=('/shatter',),
-#                                 statuses=('vip', 'admin'))
-# def shatter_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     elif args[0] == 'all':
-#         for i in activity.players:
-#             try:
-#                 i.actor.node.shattered = int(args[1])
-#             except Exception:
-#                 pass
-#     else:
-#         activity.players[
-#             int(args[0])].actor.node.shattered = int(args[1])
-#
-#
-# @bd.server.chat.message_handler(commands=('/cm',),
-#                                 statuses=('vip', 'admin'))
-# def cm_handler(activity, args, status, client_id):
+@servercommand('dv'.split(), {Status.ADMIN: 0, Status.VIP: 0})
+def dv_callback(playerdata: PlayerData, args):
+    tint = {0: ba.getactivity().globalsnode.tint,
+            1: (1.0, 1.0, 1.0)}
+
+    ba.animate_array(ba.getactivity().globalsnode, 'tint', 3, tint)
+
+
+@servercommand('box tnt'.split(), {Status.ADMIN: 0, Status.VIP: 0})
+def box_callback(playerdata: PlayerData, args):
+    from bastd.actor.playerspaz import PlayerSpaz
+
+    def do_box(player):
+        if player.actor and isinstance(player.actor, PlayerSpaz) and player.actor.node:
+            player.actor.node.torso_model = ba.getmodel('tnt')
+            player.actor.node.color_mask_texture = ba.gettexture('tnt')
+            player.actor.node.color_texture = ba.gettexture('tnt')
+            player.actor.node.highlight = (1, 1, 1)
+            player.actor.node.color = (1, 1, 1)
+            player.actor.node.head_model = None
+            player.actor.node.style = 'cyborg'
+
+    activity = ba.getactivity()
+    if len(args) < 2:
+        chatmessage(get_locale('chat_command_not_args_error'))
+    elif args[1] == 'all' and playerdata.status == Status.ADMIN:
+        for iplayer in activity.players:
+            do_box(iplayer)
+    else:
+        try:
+            iplayer = activity.players[int(args[1])]
+            do_box(iplayer)
+        except (IndexError, ValueError):
+            chatmessage(get_locale('not_player_error'))
+
+
+@servercommand('hug'.split(), {Status.VIP: 10, Status.ADMIN: 0})
+def hug_callback(playerdata: PlayerData, args):
+    def do_hug(p1: ba.Player, p2: ba.Player):
+        from bastd.actor.playerspaz import PlayerSpaz
+        if (p1.actor.is_alive() and isinstance(p1.actor, PlayerSpaz) and
+                p2.actor.is_alive() and isinstance(p2.actor, PlayerSpaz)):
+            p1.actor.node.hold_node = p2.actor.node
+            p2.actor.node.hold_node = p1.actor.node
+
+    activity = ba.getactivity()
+    if len(args) == 1:
+        alives = []
+        for i in range(len(activity.players)):
+            if activity.players[i]:
+                alives.append(i)
+        count = len(alives) // 2
+        for i in range(count):
+            do_hug(activity.players[alives[i]], activity.players[alives[count + i]])
+    elif len(args) == 3:
+        try:
+            do_hug(activity.players[int(args[1])], activity.players[int(args[2])])
+        except (IndexError, ValueError):
+            chatmessage(get_locale('not_player_error'))
+
+
+@servercommand('tint'.split(), {Status.VIP: 0, Status.ADMIN: 0})
+def tint_callback(playerdata: PlayerData, args):
+    if len(args) < 2 or (len(args) < 4 and args[1] != 'r'):
+        chatmessage(get_locale('chat_command_not_args_error'))
+    elif args[1] == 'r':
+        m = 1.30 if len(args) < 3 else float(args[2])
+        s = 1000 if len(args) < 4 else float(args[3])
+        if m > 3 and playerdata.status != Status.ADMIN:
+            chatmessage(get_locale('too_big_arg_error'))
+            return
+        tint = {
+            s * 0: (m, 0, 0),
+            s * 1: (0, m, 0),
+            s * 2: (0, 0, m),
+            s * 3: (m, 0, 0),
+        }
+
+        ba.animate_array(ba.getactivity().globalsnode,
+                         'tint', 3, tint, True, suppress_format_warning=True,
+                         timeformat=ba.TimeFormat.MILLISECONDS)
+    else:
+        color = (float(args[1]),
+                 float(args[2]),
+                 float(args[3]))
+        if max(map(abs, color)) > 3 and playerdata.status != Status.ADMIN:
+            chatmessage(get_locale('too_big_arg_error'))
+            return
+        ba.getactivity().globalsnode.tint = color
+
+
+@servercommand('sm'.split(), {Status.ADMIN: 0, Status.VIP: 0})
+def sm_callback(playerdata: PlayerData, args):
+    if not ba.getactivity().globalsnode.slow_motion:
+        ba.getactivity().globalsnode.slow_motion = True
+    else:
+        ba.getactivity().globalsnode.slow_motion = False
+
+
+@servercommand('gp'.split(), {Status.VIP: 0, Status.ADMIN: 0})
+def gp_callback(playerdata: PlayerData, args):
+    activity = ba.getactivity()
+    if len(args) < 2:
+        chatmessage(get_locale('chat_command_not_args_error'))
+    else:
+        chatmessage(get_locale('player_profiles_text'))
+        try:
+            inputdevice = activity.players[int(args[1])].sessionplayer.inputdevice
+        except (IndexError, ValueError):
+            chatmessage(get_locale('not_player_error'))
+            return
+        profiles = inputdevice.get_player_profiles()
+
+        for profile in profiles:
+            if profile == '__account__':
+                profile = inputdevice.get_account_name(False)
+            chatmessage(profile)
+
+        chatmessage(get_locale('dividing_strip_text'))
+
+
+@servercommand('fly'.split(), {Status.VIP: 60, Status.ADMIN: 0})
+def fly_callback(playerdata: PlayerData, args):
+    from bastd.actor.playerspaz import PlayerSpaz
+    activity = ba.getactivity()
+    if not args:
+        chatmessage(get_locale('chat_command_not_args_error'))
+    elif args[1] == 'all' and playerdata.status == Status.ADMIN:
+        for player in activity.players:
+            if player.actor and isinstance(player.actor, PlayerSpaz):
+                player.actor.node.fly = True
+    else:
+        try:
+            player = activity.players[int(args[1])]
+        except (IndexError, ValueError):
+            chatmessage(get_locale('not_player_error'))
+            return
+        if player.actor and hasattr(player.actor, 'node'):
+            if not player.actor.node.fly:
+                player.actor.node.fly = True
+            else:
+                player.actor.node.fly = False
+
+
+@servercommand('ac'.split(), {Status.ADMIN: 0, Status.VIP: 0})
+def ac_callback(playerdata: PlayerData, args):
+    if not args:
+        chatmessage(get_locale('chat_command_not_args_error'))
+    elif args[1] == 'r':
+        m = 1.30 if len(args) < 3 else float(args[2])
+        s = 1000 if len(args) < 4 else float(args[3])
+        ambient_color = {
+            s * 0: (m, 0, 0),
+            s * 1: (0, m, 0),
+            s * 2: (0, 0, m),
+            s * 3: (m, 0, 0)
+        }
+
+        ba.animate_array(ba.getactivity().globalsnode,
+                         'ambient_color', 3, ambient_color, True, suppress_format_warning=True,
+                         timeformat=ba.TimeFormat.MILLISECONDS)
+    else:
+        ba.getactivity().globalsnode.ambientColor = (float(args[1]),
+                                                     float(args[2]),
+                                                     float(args[3]))
+
+
+@servercommand('io iceoff'.split(), statuses={Status.ADMIN: 0, Status.VIP: 0})
+def ice_off_callback(playerdata: PlayerData, args):
+    from bastd.gameutils import SharedObjects
+    shared = SharedObjects.get()
+    activity = ba.getactivity()
+    assert isinstance(activity, ba.GameActivity)
+    activity.map.is_hockey = False
+    activity.map.node.materials = [shared.footing_material]
+    activity.map.floor.materials = [shared.footing_material]
+
+
+@servercommand('heal'.split(), {Status.VIP: 10, Status.ADMIN: 0})
+def heal_callback(playerdata: PlayerData, args):
+    activity = ba.getactivity()
+    if len(args) < 2:
+        chatmessage(get_locale('chat_command_not_args_error'))
+    elif args[1] == 'all':
+        for i in activity.players:
+            if i.actor and hasattr(i.actor, 'node'):
+                assert isinstance(i.actor.node, ba.Node)
+                i.actor.node.handlemessage(
+                    ba.PowerupMessage(poweruptype='health'))
+    else:
+        player = activity.players[int(args[0])]
+        if player.actor and hasattr(player.actor, 'node'):
+            assert isinstance(player.actor.node, ba.Node)
+            player.actor.node.handlemessage(
+                ba.PowerupMessage(poweruptype='health'))
+
+
+@servercommand('ref reflections'.split(), {Status.VIP: 0, Status.ADMIN: 0})
+def reflections_callback(playerdata: PlayerData, args):
+    activity = ba.getactivity()
+    assert isinstance(activity, ba.GameActivity)
+    try:
+        rs = [int(args[2])]
+        ref_type = 'soft' if int(args[1]) == 0 else 'powerup'
+    except (ValueError, IndexError):
+        chatmessage(get_locale('chat_command_not_args_error'))
+        return
+
+    activity.map.node.reflection = ref_type
+    activity.map.node.reflection_scale = rs
+
+    try:
+        activity.map.bg.reflection = ref_type
+        activity.map.bg.reflection_scale = rs
+    except AttributeError:
+        pass
+
+    try:
+        activity.map.floor.reflection = ref_type
+        activity.map.floor.reflection_scale = rs
+    except AttributeError:
+        pass
+
+    try:
+        activity.map.center.reflection = ref_type
+        activity.map.center.reflection_scale = rs
+    except AttributeError:
+        pass
+
+
+@servercommand('shatter'.split(), {Status.VIP: 10, Status.ADMIN: 0})
+def shatter_callback(playerdata: PlayerData, args):
+    activity = ba.getactivity()
+    if len(args) < 3 or not args[2].isdigit():
+        chatmessage(get_locale('chat_command_not_args_error'))
+    else:
+        level = int(args[2])
+        if args[1] == 'all' and playerdata.status == Status.ADMIN:
+            for i in activity.players:
+                i.actor.node.shattered = level
+        else:
+            try:
+                activity.players[int(args[0])].actor.node.shattered = level
+            except (ValueError, IndexError):
+                chatmessage(get_locale('not_player_error'))
+
+# ВНИМАНИЕ! ЗАКРОЙТЕ ГЛАЗА! тут говнокод
+# @servercommand(commands=('/cm',),
+#                                 statuses=(Status.VIP, Status.ADMIN))
+# def cm_callback(playerdata: PlayerData, args):
 #     if not args:
 #         time = 10000
 #     else:
 #         time = int(args[0])
 #
 #     op = 0.08
-#     std = ba.sharedobj('globals').vignetteOuter
+#     std = ba.getactivity().globalsnode.vignetteOuter
 #     vignetteOuter = {
-#         0: ba.sharedobj('globals').vignetteOuter,
+#         0: ba.getactivity().globalsnode.vignetteOuter,
 #         17000: (0, 1, 0)
 #     }
 #
-#     ba.animateArray(ba.sharedobj('globals'),
+#     ba.animateArray(ba.getactivity().globalsnode,
 #                     'vignetteOuter', 3, vignetteOuter)
 #
 #     try:
@@ -528,119 +466,101 @@ def nv_handler(playerdata: PlayerData, args):
 #             pass
 #
 #         vignetteOuter = {
-#             0: ba.sharedobj('globals').vignetteOuter,
+#             0: ba.getactivity().globalsnode.vignetteOuter,
 #             100: std
 #         }
 #
-#         ba.animateArray(ba.sharedobj('globals'),
+#         ba.animateArray(ba.getactivity().globalsnode,
 #                         'vignetteOuter', 3, vignetteOuter)
 #
 #     ba.timer(time, off)
-#
-#
-# @bd.server.chat.message_handler(commands=('/sleep',),
-#                                 statuses=('vip', 'admin'))
-# def sleep_handler(activity, args, status, client_id):
+
+
+@servercommand('sleep'.split(), {Status.VIP: 10, Status.ADMIN: 0})
+def sleep_callback(playerdata: PlayerData, args):
+    activity = ba.getactivity()
+    if not args:
+        chatmessage(get_locale('chat_command_not_args_error'))
+    elif args[1] == 'all' and playerdata.status == Status.ADMIN:
+        for i in activity.players:
+            try:
+                i.actor.node.handlemessage('knockout', 5000)
+            except AttributeError:
+                pass
+    else:
+        try:
+            activity.players[int(args[1])].actor.node.handlemessage(
+                'knockout', 5000)
+        except (ValueError, IndexError):
+            chatmessage(get_locale('not_player_error'))
+        except AttributeError:
+            pass
+
+
+# @servercommand(commands=('/skin',),
+#                                 statuses=(Status.VIP, Status.ADMIN))
+# def skin_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     elif args[0] == 'all':
-#         for i in activity.players:
-#             try:
-#                 i.actor.node.handlemessage('knockout', 5000)
-#             except Exception:
-#                 pass
-#     elif args[0] == 'device':
-#         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
-#                 False).encode('utf-8')
-#
-#             if account_name == args[1]:
-#                 i.actor.node.handlemessage('knockout', 5000)
-#     else:
-#         activity.players[int(args[0])].actor.node.handlemessage(
-#             'knockout', 5000)
-#
-#
-# @bd.server.chat.message_handler(commands=('/skin',),
-#                                 statuses=('vip', 'admin'))
-# def skin_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error'))
 #     elif args[0] == 'names':
-#         send_locale_message('skin_names_text')
-#         send_chat_messages(get_locale('skin_names'))
-#         send_locale_message('dividing_strip_text')
+#         chatmessage(get_locale('skin_names_text'))
+#         for msg in get_locale('skin_names'):
+#             chatmessage(msg)
+#         chatmessage(get_locale('dividing_strip_text'))
 #     elif str(args[1]) in SKIN_NAMES:
 #         account_id = activity.players[int(args[0])].get_account_id()
 #         bd.server.custom_skins[account_id] = str(args[1])
 #     elif str(args[1]) == 'reset':
 #         account_id = activity.players[int(args[0])].get_account_id()
 #         bd.server.custom_skins.pop(account_id, None)
-#
-#
-# @bd.server.chat.message_handler(commands=('/rainbow',),
-#                                 statuses=('vip', 'admin'))
-# def rainbow_handler(activity, args, status, client_id):
-#     color = {
-#         0: (0, 0, 3), 500: (0, 3, 0),
-#         1000: (3, 0, 0), 1500: (0, 0, 3)
-#     }
-#
-#     highlight = {
-#         0: (3, 0, 0), 500: (0, 0, 0),
-#         1000: (0, 0, 3), 1500: (3, 0, 0)
-#     }
-#
+
+
+@servercommand('rainbow'.split(), {Status.VIP: 0, Status.ADMIN: 0})
+def rainbow_callback(playerdata: PlayerData, args):
+    color = {
+        0: (0, 0, 3), 0.5: (0, 3, 0),
+        1: (3, 0, 0), 1.5: (0, 0, 3)
+    }
+
+    highlight = {
+        0: (3, 0, 0), 0.5: (0, 0, 0),
+        1: (0, 0, 3), 1.5: (3, 0, 0)
+    }
+
+    def do_rainbow(player):
+        if player and player.actor and player.actor.node:
+            ba.animate_array(player.actor.node,
+                             'color', 3, color, True)
+            ba.animate_array(player.actor.node,
+                             'highlight', 3, highlight, True)
+            player.actor.node.handlemessage(
+                'celebrate', 6000)
+
+    activity = ba.getactivity()
+
+    if len(args) < 1:
+        chatmessage(get_locale('chat_command_not_args_error'))
+    elif args[1] == 'all':
+        for i in activity.players:
+            do_rainbow(i)
+    else:
+        try:
+            do_rainbow(activity.players[int(args[1])])
+        except (IndexError, ValueError):
+            chatmessage(get_locale('not_player_error'))
+
+
+# commands handlers for admins
+@servercommand('restart'.split(), {Status.ADMIN: 0})
+def restart_callback(playerdata: PlayerData, args):
+    _ba.quit()
+
+
+# @servercommand(commands=('/freeze',),
+#                                 statuses=(Status.ADMIN,))
+# def freeze_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
-#     elif args[0] == 'all':
-#         for i in activity.players:
-#             try:
-#                 ba.animateArray(i.actor.node, 'color', 3,
-#                                 color, True)
-#
-#                 ba.animateArray(i.actor.node, 'highlight', 3,
-#                                 highlight, True)
-#
-#                 i.actor.node.handlemessage('celebrate', 100000000)
-#             except Exception:
-#                 pass
-#     elif args[0] == 'device':
-#         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
-#                 False).encode('utf-8')
-#
-#             if account_name == args[1]:
-#                 ba.animateArray(i.actor.node, 'color', 3,
-#                                 color, True)
-#
-#                 ba.animateArray(i.actor.node, 'highlight', 3,
-#                                 highlight, True)
-#
-#                 i.actor.node.handlemessage('celebrate', 100000000)
-#     else:
-#         ba.animateArray(activity.players[int(args[0])].actor.node,
-#                         'color', 3, color, True)
-#
-#         ba.animateArray(activity.players[int(args[0])].actor.node,
-#                         'highlight', 3, highlight, True)
-#
-#         activity.players[int(args[0])].actor.node.handlemessage(
-#             'celebrate', 100000000)
-#
-#
-# # commands handlers for admins
-# @bd.server.chat.message_handler(commands=('/restart',),
-#                                 statuses=('admin',))
-# def restart_handler(activity, args, status, client_id):
-#     baInternal.quit()
-#
-#
-# @bd.server.chat.message_handler(commands=('/freeze',),
-#                                 statuses=('admin',))
-# def freeze_handler(activity, args, status, client_id):
-#     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[0] == 'all':
 #         for i in activity.players:
 #             try:
@@ -649,7 +569,7 @@ def nv_handler(playerdata: PlayerData, args):
 #                 pass
 #     elif args[0] == 'device':
 #         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
+#             account_name = i.sessionplayer.inputdevice._getAccountName(
 #                 False).encode('utf-8')
 #
 #             if account_name == args[1]:
@@ -659,11 +579,11 @@ def nv_handler(playerdata: PlayerData, args):
 #             ba.FreezeMessage())
 #
 #
-# @bd.server.chat.message_handler(commands=('/thaw',),
-#                                 statuses=('admin',))
-# def thaw_handler(activity, args, status, client_id):
+# @servercommand(commands=('/thaw',),
+#                                 statuses=(Status.ADMIN,))
+# def thaw_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[0] == 'all':
 #         for i in activity.players:
 #             try:
@@ -672,7 +592,7 @@ def nv_handler(playerdata: PlayerData, args):
 #                 pass
 #     elif args[0] == 'device':
 #         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
+#             account_name = i.sessionplayer.inputdevice._getAccountName(
 #                 False).encode('utf-8')
 #
 #             if account_name == args[1]:
@@ -682,11 +602,11 @@ def nv_handler(playerdata: PlayerData, args):
 #             ba.ThawMessage())
 #
 #
-# @bd.server.chat.message_handler(commands=('/kill',),
-#                                 statuses=('admin',))
-# def kill_handler(activity, args, status, client_id):
+# @servercommand(commands=('/kill',),
+#                                 statuses=(Status.ADMIN,))
+# def kill_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[0] == 'all':
 #         for i in activity.players:
 #             try:
@@ -695,7 +615,7 @@ def nv_handler(playerdata: PlayerData, args):
 #                 pass
 #     elif args[0] == 'device':
 #         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
+#             account_name = i.sessionplayer.inputdevice._getAccountName(
 #                 False).encode('utf-8')
 #
 #             if account_name == args[1]:
@@ -705,11 +625,11 @@ def nv_handler(playerdata: PlayerData, args):
 #             ba.DieMessage())
 #
 #
-# @bd.server.chat.message_handler(commands=('/curse',),
-#                                 statuses=('admin',))
-# def curse_handler(activity, args, status, client_id):
+# @servercommand(commands=('/curse',),
+#                                 statuses=(Status.ADMIN,))
+# def curse_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[0] == 'all':
 #         for i in activity.players:
 #             try:
@@ -718,7 +638,7 @@ def nv_handler(playerdata: PlayerData, args):
 #                 pass
 #     elif args[0] == 'device':
 #         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
+#             account_name = i.sessionplayer.inputdevice._getAccountName(
 #                 False).encode('utf-8')
 #
 #             if account_name == args[1]:
@@ -727,11 +647,11 @@ def nv_handler(playerdata: PlayerData, args):
 #         activity.players[int(args[0])].actor.curse()
 #
 #
-# @bd.server.chat.message_handler(commands=('/gm',),
-#                                 statuses=('admin',))
-# def gm_handler(activity, args, status, client_id):
+# @servercommand(commands=('/gm',),
+#                                 statuses=(Status.ADMIN,))
+# def gm_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[0] == 'all':
 #         for i in activity.players:
 #             try:
@@ -753,7 +673,7 @@ def nv_handler(playerdata: PlayerData, args):
 #                 pass
 #     elif args[0] == 'device':
 #         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
+#             account_name = i.sessionplayer.inputdevice._getAccountName(
 #                 False).encode('utf-8')
 #
 #             if account_name == args[1]:
@@ -773,7 +693,7 @@ def nv_handler(playerdata: PlayerData, args):
 #                     i.actor._punchPowerScale = 1.2
 #     else:
 #         if not activity.players[
-#             int(args[0])].actor.node.hockey:
+#                 int(args[0])].actor.node.hockey:
 #             activity.players[
 #                 int(args[0])].actor.node.hockey = True
 #         else:
@@ -781,7 +701,7 @@ def nv_handler(playerdata: PlayerData, args):
 #                 int(args[0])].actor.node.hockey = False
 #
 #         if not activity.players[
-#             int(args[0])].actor.node.invincible:
+#                 int(args[0])].actor.node.invincible:
 #             activity.players[
 #                 int(args[0])].actor.node.invincible = True
 #         else:
@@ -789,7 +709,7 @@ def nv_handler(playerdata: PlayerData, args):
 #                 int(args[0])].actor.node.invincible = False
 #
 #         if not activity.players[
-#                    int(args[0])].actor._punchPowerScale == 1.2:
+#                 int(args[0])].actor._punchPowerScale == 1.2:
 #             activity.players[
 #                 int(args[0])].actor._punchPowerScale = 5
 #         else:
@@ -797,29 +717,29 @@ def nv_handler(playerdata: PlayerData, args):
 #                 int(args[0])].actor._punchPowerScale = 1.2
 #
 #
-# @bd.server.chat.message_handler(commands=('/pause',),
-#                                 statuses=('admin',))
-# def pause_handler(activity, args, status, client_id):
-#     if not ba.sharedobj('globals').paused:
-#         ba.sharedobj('globals').paused = True
+# @servercommand(commands=('/pause',),
+#                                 statuses=(Status.ADMIN,))
+# def pause_callback(playerdata: PlayerData, args):
+#     if not ba.getactivity().globalsnode.paused:
+#         ba.getactivity().globalsnode.paused = True
 #     else:
-#         ba.sharedobj('globals').paused = False
+#         ba.getactivity().globalsnode.paused = False
 #
 #
-# @bd.server.chat.message_handler(commands=('/cameraMode', '/cam'),
-#                                 statuses=('admin',))
-# def camera_mode_handler(activity, args, status, client_id):
-#     if ba.sharedobj('globals').cameraMode == 'follow':
-#         ba.sharedobj('globals').cameraMode = 'rotate'
+# @servercommand(commands=('/cameraMode', '/cam'),
+#                                 statuses=(Status.ADMIN,))
+# def camera_mode_callback(playerdata: PlayerData, args):
+#     if ba.getactivity().globalsnode.cameraMode == 'follow':
+#         ba.getactivity().globalsnode.cameraMode = 'rotate'
 #     else:
-#         ba.sharedobj('globals').cameraMode = 'follow'
+#         ba.getactivity().globalsnode.cameraMode = 'follow'
 #
 #
-# @bd.server.chat.message_handler(commands=('/icy',),
-#                                 statuses=('admin',))
-# def icy_handler(activity, args, status, client_id):
+# @servercommand(commands=('/icy',),
+#                                 statuses=(Status.ADMIN,))
+# def icy_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif len(args) >= 2:
 #         activity.players[int(args[0])].actor.node = \
 #             activity.players[int(args[1])].actor.node
@@ -828,21 +748,21 @@ def nv_handler(playerdata: PlayerData, args):
 #             activity.players[int(args[0])].actor.node
 #
 #
-# @bd.server.chat.message_handler(commands=('/maxPlayers', '/mp'),
-#                                 statuses=('admin',))
-# def max_players_handler(activity, args, status, client_id):
+# @servercommand(commands=('/maxPlayers', '/mp'),
+#                                 statuses=(Status.ADMIN,))
+# def max_players_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     else:
 #         activity._maxPlayers = int(args[0])
-#         baInternal._setPublicPartyMaxSize(int(args[0]))
+#         _ba._setPublicPartyMaxSize(int(args[0]))
 #
 #
-# @bd.server.chat.message_handler(commands=('/rise',),
-#                                 statuses=('admin',))
-# def rise_handler(activity, args, status, client_id):
+# @servercommand(commands=('/rise',),
+#                                 statuses=(Status.ADMIN,))
+# def rise_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[0] == 'all':
 #         for i in activity.players:
 #             try:
@@ -851,7 +771,7 @@ def nv_handler(playerdata: PlayerData, args):
 #                 pass
 #     elif args[0] == 'device':
 #         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
+#             account_name = i.sessionplayer.inputdevice._getAccountName(
 #                 False).encode('utf-8')
 #
 #             if account_name == args[1]:
@@ -860,11 +780,11 @@ def nv_handler(playerdata: PlayerData, args):
 #         activity.spawnPlayer(activity.players[int(args[0])])
 #
 #
-# @bd.server.chat.message_handler(commands=('/tnt',),
-#                                 statuses=('admin',))
-# def tnt_handler(activity, args, status, client_id):
+# @servercommand(commands=('/tnt',),
+#                                 statuses=(Status.ADMIN,))
+# def tnt_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[2] == 'myPos':
 #         for i in activity.players:
 #             if nick == i.get_name().encode('utf-8'):
@@ -878,15 +798,15 @@ def nv_handler(playerdata: PlayerData, args):
 #                           float(args[2]))).autoRetain()
 #
 #
-# @bd.server.chat.message_handler(commands=('/bomb',),
-#                                 statuses=('admin',))
-# def bomb_handler(activity, args, status, client_id):
+# @servercommand(commands=('/bomb',),
+#                                 statuses=(Status.ADMIN,))
+# def bomb_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[0] == 'names':
-#         send_locale_message('bomb_names_text')
+#         chatmessage(get_locale('bomb_names_text')
 #         send_chat_messages(get_locale('arg_bomb_options'))
-#         send_locale_message('dividing_strip_text')
+#         chatmessage(get_locale('dividing_strip_text')
 #     elif args[2] == 'myPos':
 #         for i in activity.players:
 #             if nick == i.get_name().encode('utf-8'):
@@ -902,11 +822,11 @@ def nv_handler(playerdata: PlayerData, args):
 #                           float(args[4]))).autoRetain()
 #
 #
-# @bd.server.chat.message_handler(commands=('/blast',),
-#                                 statuses=('admin',))
-# def blast_handler(activity, args, status, client_id):
+# @servercommand(commands=('/blast',),
+#                                 statuses=(Status.ADMIN,))
+# def blast_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[1] == 'myPos':
 #         for i in activity.players:
 #             if nick == i.get_name().encode('utf-8'):
@@ -920,15 +840,15 @@ def nv_handler(playerdata: PlayerData, args):
 #                            float(args[3]))).autoRetain()
 #
 #
-# @bd.server.chat.message_handler(commands=('/powerup', '/bonus'),
-#                                 statuses=('admin',))
-# def powerup_handler(activity, args, status, client_id):
+# @servercommand(commands=('/powerup', '/bonus'),
+#                                 statuses=(Status.ADMIN,))
+# def powerup_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[0] == 'names':
-#         send_locale_message('powerup_names_text')
+#         chatmessage(get_locale('powerup_names_text')
 #         send_chat_messages(get_locale('arg_powerup_options'))
-#         send_locale_message('dividing_strip_text')
+#         chatmessage(get_locale('dividing_strip_text')
 #     elif args[1] == 'myPos':
 #         for i in activity.players:
 #             if nick == i.get_name().encode('utf-8'):
@@ -942,11 +862,11 @@ def nv_handler(playerdata: PlayerData, args):
 #                              float(args[3]))).autoRetain()
 #
 #
-# @bd.server.chat.message_handler(commands=('/inv',),
-#                                 statuses=('admin',))
-# def inv_handler(activity, args, status, client_id):
+# @servercommand(commands=('/inv',),
+#                                 statuses=(Status.ADMIN,))
+# def inv_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[0] == 'all':
 #         for i in activity.players:
 #             try:
@@ -967,7 +887,7 @@ def nv_handler(playerdata: PlayerData, args):
 #                 pass
 #     elif args[0] == 'device':
 #         for i in activity.players:
-#             account_name = i.getInputDevice()._getAccountName(
+#             account_name = i.sessionplayer.inputdevice._getAccountName(
 #                 False).encode('utf-8')
 #
 #             if account_name == args[1]:
@@ -1001,11 +921,11 @@ def nv_handler(playerdata: PlayerData, args):
 #         t.style = 'cyborg'
 #
 #
-# @bd.server.chat.message_handler(commands=('/ban',),
-#                                 statuses=('admin',))
-# def ban_handler(activity, args, status, client_id):
+# @servercommand(commands=('/ban',),
+#                                 statuses=(Status.ADMIN,))
+# def ban_callback(playerdata: PlayerData, args):
 #     if len(args) < 2 or (args[0] == 'device' and len(args) < 3):
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     elif args[0] == 'device':
 #         for p in activity.players:
 #             operator = None
@@ -1016,7 +936,7 @@ def nv_handler(playerdata: PlayerData, args):
 #             if 'id' in bd_server_player:
 #                 operator = bd_server_player['id']
 #
-#             account_name = p.getInputDevice()._getAccountName(
+#             account_name = p.sessionplayer.inputdevice._getAccountName(
 #                 False).encode('utf-8')
 #
 #             if account_name == args[1]:
@@ -1027,7 +947,7 @@ def nv_handler(playerdata: PlayerData, args):
 #             except IndexError:
 #                 end = None
 #
-#             baInternal._disconnectClient(p.getInputDevice().getClientID())
+#             _ba._disconnectClient(p.sessionplayer.inputdevice.client_id())
 #             if account_id is not None:
 #                 api.player.ban.add(
 #                     in_thread=True,
@@ -1051,7 +971,7 @@ def nv_handler(playerdata: PlayerData, args):
 #         except IndexError:
 #             end = None
 #
-#         baInternal._disconnectClient(activity.players[int(args[0])].getInputDevice().getClientID())
+#         _ba._disconnectClient(activity.players[int(args[0])].sessionplayer.inputdevice.client_id())
 #         if account_id is not None:
 #             api.player.ban.add(
 #                 in_thread=True,
@@ -1061,33 +981,32 @@ def nv_handler(playerdata: PlayerData, args):
 #                 end=end)
 #
 #
-# @bd.server.chat.message_handler(commands=['/fakekickvote', '/fkv'],
-#                                 statuses=['admin'])
-# def fakekickvote_handler(activity, args, status, client_id):
+# @servercommand(commands=['/fakekickvote', '/fkv'],
+#                                 statuses=[Status.ADMIN])
+# def fakekickvote_callback(playerdata: PlayerData, args):
 #     if not args:
-#         send_locale_message('chat_command_not_args_error')
+#         chatmessage(get_locale('chat_command_not_args_error')
 #     else:
-#         activity = baInternal._getForegroundHostActivity()
+#         activity = _ba._getForegroundHostActivity()
 #
 #         p = activity.players[int(args[0])]
-#         device = p.getInputDevice()
+#         device = p.sessionplayer.inputdevice
 #         ba.screenMessage(get_format_locale('kickvote_start', name=p.get_name()), color=(1, 1, 0))
 #         ba.screenMessage(get_format_locale('kickvote_type'), color=(1, 1, 0))
 #         ba.screenMessage(get_format_locale('kickvote_needed_num', n='4'), color=(1, 1, 0))
 #
-#
-# @bd.server.chat.message_handler(func=lambda m: check_message_for_team(m),
+# @servercommand(func=lambda m: check_message_for_team(m),
 #                                 statuses=['anyone'])
-# def team_detect_handler(activity, args, status, client_id):
-#     activity = baInternal._getForegroundHostActivity()
+# def team_detect_callback(playerdata: PlayerData, args):
+#     activity = _ba._getForegroundHostActivity()
 #
 #     device = None
 #     player = None
 #     for p in activity.players:
-#         if client_id == p.getInputDevice().getClientID():
-#             device = p.getInputDevice()
+#         if client_id == p.sessionplayer.inputdevice.client_id():
+#             device = p.sessionplayer.inputdevice
 #             player = p
 #             break
 #
-#     send_locale_message('team_warn', name=device.player.sessionplayer.get_name(),
+#     chatmessage(get_locale('team_warn', name=device.player.sessionplayer.get_name(),
 #                         account_id=player.get_account_id())

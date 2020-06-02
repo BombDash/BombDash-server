@@ -2,6 +2,7 @@
   <dictionary name="roman">
     <words>
       <w>airstrike</w>
+      <w>alives</w>
       <w>astroid</w>
       <w>autoretain</w>
       <w>bahooks</w>
@@ -24,6 +25,9 @@
       <w>grom</w>
       <w>handlemessage</w>
       <w>hmmm</w>
+      <w>iceoff</w>
+      <w>inputdevice</w>
+      <w>iplayer</w>
       <w>ispunch</w>
       <w>jetpack</w>
       <w>kickvote</w>
