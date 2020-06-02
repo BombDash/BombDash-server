@@ -1,3 +1,4 @@
+from bd.httpapi import sharedapi as serverapi
 from bd.me import redefine_flag, redefine_class_methods, RedefineFlag
 from bd.playerdata import PlayerData, PrefixData, ParticleData, add_player, del_player, Status
 
@@ -10,18 +11,18 @@ class GameActivity(ba.Activity):
 
     @redefine_flag(RedefineFlag.DECORATE_PRE)
     def on_player_join(self, player: ba.Player) -> None:
+        account_id = player.sessionplayer.get_account_id()
+        info = serverapi.player.get(id=account_id)
+        print(info)
         p_data = PlayerData(
-            id=player.sessionplayer.get_account_id(),
+            id=account_id,
             client_id=player.sessionplayer.inputdevice.client_id,
-            status=Status.ADMIN,  # TODO: админ ну да ну да
+            status=Status(info['status']) if 'status' in info else 'player',
             prefix=PrefixData(
-                text='super prefix',
-                speed=250,
-                animation=(-65528, -16713473, -15335680)
-            ),
+                **info['prefix']
+            ) if 'prefix' in info and info['prefix'] else None,
             particle=ParticleData(
-                particle_type='1',
-                emit_type='ice'
-            )
+                **info['particle']
+            ) if 'particle' in info and info['particle'] else None
         )
         add_player(p_data)

@@ -6,6 +6,7 @@
       <w>autoretain</w>
       <w>bahooks</w>
       <w>ballistica</w>
+      <w>baseurl</w>
       <w>bastd</w>
       <w>bombdash</w>
       <w>bombtextures</w>
@@ -48,7 +49,9 @@
       <w>pylint</w>
       <w>pytest</w>
       <w>pythonpath</w>
+      <w>serverapi</w>
       <w>servercommand</w>
+      <w>sharedapi</w>
       <w>spaz</w>
       <w>stdbomb</w>
       <w>stdbot</w>

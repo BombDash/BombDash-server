@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+src/python/bd/config.py
