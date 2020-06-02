@@ -23,12 +23,14 @@ class Airstrike(ba.Actor):
 
     def __init__(
             self, position: Sequence[float] = (0, 3, 0), velocity: Sequence[float] = (0, -5, 0),
-            amount: int = 15, bomb_type: str = 'impact', highlight: bool = True):
+            amount: int = 15, bomb_type: str = 'impact', highlight: bool = True,
+            source_player: ba.Player = None):
         ba.Actor.__init__(self)
         self.position = position
         self.velocity = velocity
         self.amount = amount
         self.bomb_type = bomb_type
+        self._source_player = source_player
 
         self.drop_count = 0
 
@@ -62,7 +64,8 @@ class Airstrike(ba.Actor):
             stdbomb.Bomb(bomb_type=self.bomb_type,
                          position=drop_position,
                          blast_radius=3,
-                         velocity=self.velocity).autoretain()
+                         velocity=self.velocity,
+                         source_player=self._source_player).autoretain()
 
             self.drop_count += 1
         else:

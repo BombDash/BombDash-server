@@ -54,7 +54,7 @@ def heal_blast(self: stdbomb.Blast,
                blast_radius: float = 2.0,
                hit_type: str = 'explosion',
                hit_subtype: str = 'normal'):
-    self.node = ba.newnode('light')  # We must define node
+    self.node = None
     ba.emitfx(
         position=position,
         velocity=(0, 0, 0),
@@ -62,5 +62,5 @@ def heal_blast(self: stdbomb.Blast,
         spread=0.7,
         chunk_type='spark')
 
-    TreatmentArea(position=position)
-    ba.playsound(ba.getsound('healthPowerup'), position=self.node.position)
+    TreatmentArea(position=position).autoretain()
+    ba.playsound(ba.getsound('healthPowerup'), position=position)

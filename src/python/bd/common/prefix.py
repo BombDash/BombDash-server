@@ -24,8 +24,8 @@ class Prefix(ba.Actor):
             prefix_speed=250,
             prefix_offset=(0, 1.75, 0),
             prefix_animation=(-65528, -16713473, -15335680),
-            emit_type='spark',
-            particle_type='ice'):
+            emit_type='body',
+            particle_type='spark'):
         super().__init__()
         self.owner = owner
         self.prefix_text = prefix_text
@@ -40,7 +40,7 @@ class Prefix(ba.Actor):
         self._radius = 1
 
         emit_time = 0.06 if emit_type in ('sweat', 'spark') else 0.11
-        if particle_type:
+        if emit_type != 'off':
             self.type_selection_handler_timer = ba.Timer(
                 emit_time,
                 self._type_selection_handler,
@@ -83,11 +83,11 @@ class Prefix(ba.Actor):
             owner_torso_pos[1] - 0.25 + random.random() * 0.5,
             owner_torso_pos[2] - 0.25 + random.random() * 0.5)
 
-        if self.emit_type in ('sweat', 'spark'):
+        if self.particle_type in ('sweat', 'spark'):
             spread = 0.1
             scale = random.random() * 0.8
             owner_vel = self.owner.velocity
-            vel = 4 if not self.emit_type == 'ice' else 0
+            vel = 4 if not self.particle_type == 'ice' else 0
             velocity = (
                 (-vel + (random.random() * (vel * 2))) + owner_vel[0] * 2,
                 (-vel + (random.random() * (vel * 2))) + owner_vel[1] * 4,
@@ -103,7 +103,7 @@ class Prefix(ba.Actor):
                   count=10,
                   scale=scale,
                   spread=spread,
-                  chunk_type=self.emit_type)
+                  chunk_type=self.particle_type)
 
     def _second_type_handler(self):
         position = (
@@ -116,7 +116,7 @@ class Prefix(ba.Actor):
                   count=10,
                   scale=0.1 + random.random(),
                   spread=0.15,
-                  chunk_type=self.emit_type)
+                  chunk_type=self.particle_type)
 
     def _third_type_handler(self):
         sin = math.sin(self._offset) * self._radius
@@ -132,7 +132,7 @@ class Prefix(ba.Actor):
                   count=5,
                   scale=1,
                   spread=0,
-                  chunk_type=self.emit_type)
+                  chunk_type=self.particle_type)
 
     def _fourth_type_handler(self):
         position = (
@@ -145,18 +145,18 @@ class Prefix(ba.Actor):
                   count=10,
                   scale=0.1 + random.random(),
                   spread=0.001,
-                  chunk_type=self.emit_type,
+                  chunk_type=self.particle_type,
                   emit_type='stickers')
 
     def _type_selection_handler(self):
         if self.owner and not self.owner.dead:
-            if self.particle_type == '1':
+            if self.emit_type == 'body':
                 self._first_type_handler()
-            elif self.particle_type == 2:
+            elif self.emit_type == 'legs':
                 self._second_type_handler()
-            elif self.particle_type == 3:  # FIXME КТО-НИБУДЬ РАЗБЕРИТЕСЬ ЧТО ТУТ ЗА ******!!!
+            elif self.emit_type == 'around':  # FIXME КТО-НИБУДЬ РАЗБЕРИТЕСЬ ЧТО ТУТ ЗА ******!!!
                 self._third_type_handler()
-            elif self.particle_type == 4:
+            elif self.emit_type == 'underfoot':
                 self._fourth_type_handler()
 
     def handlemessage(self, msg: Any) -> Any:

@@ -42,7 +42,6 @@ class Request:
         self.method = method
 
     def __call__(self, in_thread=False, **kwargs) -> Dict:
-        print(f'CALL {self.method}')
         if in_thread:
             thread = Thread(target=_make_request,
                             args=(self.method, kwargs,))

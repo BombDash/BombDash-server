@@ -3,7 +3,7 @@ from _ba import chatmessage
 import _ba
 
 from bd.chat.commands_engine import servercommand, _handlers
-from bd.playerdata import PlayerData, Status
+from bd.playerdata import PlayerData, Status, get_player_by
 from bd.locale import get_locale
 
 
@@ -42,15 +42,18 @@ def kick_callback(playerdata: PlayerData, args):
         ban_time = 300
         clients_ids = [player['client_id'] for player in
                        _ba.get_game_roster()]
-
         if len(args) > 1 and playerdata.status == Status.ADMIN:
             ban_time = int(args[1])
         elif len(args) > 1 and playerdata.status != Status.ADMIN:
             chatmessage(get_locale('time_arg_access_error'))
 
         if int(args[1]) in clients_ids:
-            _ba.disconnect_client(int(args[1]),
-                                  ban_time=ban_time)
+            target = get_player_by('client_id', int(args[1]))
+            if target.status == Status.ADMIN:
+                chatmessage(get_locale('kick_admin_error'))
+            else:
+                _ba.disconnect_client(int(args[1]),
+                                      ban_time=ban_time)
         else:
             chatmessage(get_locale('not_player_error'))
 
@@ -60,17 +63,18 @@ def remove_handler(playerdata: PlayerData, args):
     activity = ba.getactivity()
     if len(args) < 2:
         chatmessage(get_locale('chat_command_not_args_error'))
-    elif args[0] == 'all' and playerdata.status == Status.ADMIN:
+    elif args[1] == 'all' and playerdata.status == Status.ADMIN:
         for player in activity.players:
             player.sessionplayer.remove_from_game()
     else:
-        activity.players[int(args[0])].sessionplayer.remove_from_game()
+        activity.players[int(args[1])].sessionplayer.remove_from_game()
 
 
 @servercommand('end'.split(), {Status.ADMIN: 0, Status.VIP: 120})
 def end_handler(playerdata: PlayerData, args):
     activity = ba.getactivity()
-    activity.end()
+    assert isinstance(activity, ba.GameActivity)
+    activity.end_game()
 
 
 @servercommand('ooh'.split(), {Status.ADMIN: 0, Status.VIP: 60})

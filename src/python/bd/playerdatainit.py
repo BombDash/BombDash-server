@@ -13,7 +13,6 @@ class GameActivity(ba.Activity):
     def on_player_join(self, player: ba.Player) -> None:
         account_id = player.sessionplayer.get_account_id()
         info = serverapi.player.get(id=account_id)
-        print(info)
         p_data = PlayerData(
             id=account_id,
             client_id=player.sessionplayer.inputdevice.client_id,

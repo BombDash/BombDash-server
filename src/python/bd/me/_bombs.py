@@ -308,7 +308,7 @@ class Blast(ba.Actor):
         factory = BombFactory.get()
 
         self.blast_type = blast_type
-        self.source_player = source_player
+        self._source_player = source_player
         self.hit_type = hit_type
         self.hit_subtype = hit_subtype
         self.radius = blast_radius

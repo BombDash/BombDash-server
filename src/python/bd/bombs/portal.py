@@ -60,7 +60,7 @@ class PortalBomb(MeBomb):
 @blast('portal_bomb')
 def portal_blast(self, position, velocity, blast_radius,
                  hit_type, hit_subtype):
-    if not self.source_player.node:
+    if not self._source_player.node:
         return
     self.node = None
     Portals(
@@ -68,5 +68,5 @@ def portal_blast(self, position, velocity, blast_radius,
                random.random() * 2,
                random.random() * 2),
         first_position=position,
-        second_position=self.source_player.actor.node.position).autoretain()
+        second_position=self._source_player.actor.node.position).autoretain()
     ba.playsound(ba.getsound('laserReverse'), position=position)

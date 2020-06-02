@@ -28,9 +28,9 @@ class AirstrikeBomb(MeBomb):
 
 
 @blast('airstrike')
-def airstrike_blast(self, position, velocity, blast_radius,
+def airstrike_blast(self: stdbomb.Blast, position, velocity, blast_radius,
                     hit_type, hit_subtype):
-    self.node = ba.newnode('light')  # We must define node
+    self.node = None  # We must define node
     ba.emitfx(
         position=position,
         velocity=velocity,
@@ -38,5 +38,5 @@ def airstrike_blast(self, position, velocity, blast_radius,
         spread=0.7,
         chunk_type='spark')
 
-    Airstrike(position=position)
+    Airstrike(position=position, source_player=ba.existing(self._source_player)).autoretain()
     ba.playsound(ba.getsound('laserReverse'))  # position=self.node.position?
