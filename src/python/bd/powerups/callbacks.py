@@ -20,15 +20,37 @@ if TYPE_CHECKING:
 
 @powerup('speed', texture='powerupSpeed', freq=1)
 def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
-    powerup_expiration_time = 10
+    powerup_expiration_time = 10_000
     tex = ba.gettexture('powerupSpeed')
 
+    # noinspection DuplicatedCode
     self._flash_billboard(tex)
     if self.powerups_expire:
         self.node.mini_billboard_1_texture = tex
-        t = ba.time()
+        t = ba.time(timeformat=ba.TimeFormat.MILLISECONDS)
         self.node.mini_billboard_1_start_time = t
         self.node.mini_billboard_1_end_time = t + powerup_expiration_time
+
+        def _speed_wear_off_flash() -> None:
+            if self.node:
+                self.node.billboard_texture = tex
+                self.node.billboard_opacity = 1.0
+                self.node.billboard_cross_out = True
+
+        def _speed_wear_off() -> None:
+            if self.node:
+                ba.playsound(stdpowerup.PowerupBoxFactory.get().powerdown_sound,
+                             position=self.node.position)
+                self.node.billboard_opacity = 0.0
+
+        self._jetpack_wear_off_flash_timer = (ba.Timer(
+            powerup_expiration_time - 2000,
+            _speed_wear_off_flash,
+            timeformat=ba.TimeFormat.MILLISECONDS))
+        self._jetpack_wear_off_timer = (ba.Timer(
+            powerup_expiration_time,
+            _speed_wear_off,
+            timeformat=ba.TimeFormat.MILLISECONDS))
 
     if self.node.hockey:
         return
@@ -40,21 +62,42 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
             self.node.hockey = False
 
     ba.timer(powerup_expiration_time,
-             off_speed_wrapper)
+             off_speed_wrapper, timeformat=ba.TimeFormat.MILLISECONDS)
 
 
-@powerup('jetpack', texture='buttonJump', freq=1)
+@powerup('jetpack', texture='buttonJump', freq=1_00)
 def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
-    powerup_expiration_time = 10
+    powerup_expiration_time = 10_000
 
     tex = ba.gettexture('buttonJump')
 
     self._flash_billboard(tex)
     if self.powerups_expire:
-        self.node.mini_billboard_1_texture = tex
-        t = ba.time()
-        self.node.mini_billboard_1_start_time = t
-        self.node.mini_billboard_1_end_time = t + powerup_expiration_time
+        self.node.mini_billboard_2_texture = tex
+        t = ba.time(timeformat=ba.TimeFormat.MILLISECONDS)
+        self.node.mini_billboard_2_start_time = t
+        self.node.mini_billboard_2_end_time = t + powerup_expiration_time
+
+        def _jetpack_wear_off_flash() -> None:
+            if self.node:
+                self.node.billboard_texture = tex
+                self.node.billboard_opacity = 1.0
+                self.node.billboard_cross_out = True
+
+        def _jetpack_wear_off() -> None:
+            if self.node:
+                ba.playsound(stdpowerup.PowerupBoxFactory.get().powerdown_sound,
+                             position=self.node.position)
+                self.node.billboard_opacity = 0.0
+
+        self._jetpack_wear_off_flash_timer = (ba.Timer(
+            powerup_expiration_time - 2000,
+            _jetpack_wear_off_flash,
+            timeformat=ba.TimeFormat.MILLISECONDS))
+        self._jetpack_wear_off_timer = (ba.Timer(
+            powerup_expiration_time,
+            _jetpack_wear_off,
+            timeformat=ba.TimeFormat.MILLISECONDS))
 
     def _jetpack_wrapper():
         if not self.node.exists():
@@ -83,7 +126,7 @@ def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
         # self._turboFilterAddPress('jump')  # Это че?
 
     self.node.getdelegate(playerspaz.PlayerSpaz).getplayer(ba.Player).assigninput(
-        'jumpPress', jetpack_wrapper)
+        ba.InputType.JUMP_PRESS, jetpack_wrapper)
 
     def off_jetpack_wrapper():
         if self.node.exists():
@@ -91,15 +134,7 @@ def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
             self.node.getdelegate(playerspaz.PlayerSpaz).connect_controls_to_player()
 
     ba.timer(powerup_expiration_time,
-             off_jetpack_wrapper)
-
-    tex = ba.gettexture('buttonJump')
-    self._flash_billboard(tex)
-    if self.powerups_expire:
-        self.node.mini_billboard_2_texture = tex
-        t = ba.time()
-        self.node.mini_billboard_2_start_time = t
-        self.node.mini_billboard_2_end_time = t + powerup_expiration_time
+             off_jetpack_wrapper, timeformat=ba.TimeFormat.MILLISECONDS)
 
 
 @powerup('heal_bombs', 'heart', freq=2, bomb_type='heal')
