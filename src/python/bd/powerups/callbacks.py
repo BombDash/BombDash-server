@@ -42,6 +42,7 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
                 ba.playsound(stdpowerup.PowerupBoxFactory.get().powerdown_sound,
                              position=self.node.position)
                 self.node.billboard_opacity = 0.0
+                self.node.hockey = False
 
         self._jetpack_wear_off_flash_timer = (ba.Timer(
             powerup_expiration_time - 2000,
@@ -56,13 +57,6 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
         return
 
     self.node.hockey = True
-
-    def off_speed_wrapper():
-        if self.node.exists():
-            self.node.hockey = False
-
-    ba.timer(powerup_expiration_time,
-             off_speed_wrapper, timeformat=ba.TimeFormat.MILLISECONDS)
 
 
 @powerup('jetpack', texture='buttonJump', freq=1_00)
@@ -89,6 +83,7 @@ def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
                 ba.playsound(stdpowerup.PowerupBoxFactory.get().powerdown_sound,
                              position=self.node.position)
                 self.node.billboard_opacity = 0.0
+                self.node.getdelegate(playerspaz.PlayerSpaz).connect_controls_to_player()
 
         self._jetpack_wear_off_flash_timer = (ba.Timer(
             powerup_expiration_time - 2000,
@@ -127,14 +122,6 @@ def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
 
     self.node.getdelegate(playerspaz.PlayerSpaz).getplayer(ba.Player).assigninput(
         ba.InputType.JUMP_PRESS, jetpack_wrapper)
-
-    def off_jetpack_wrapper():
-        if self.node.exists():
-            # self._jumpCooldown = 250
-            self.node.getdelegate(playerspaz.PlayerSpaz).connect_controls_to_player()
-
-    ba.timer(powerup_expiration_time,
-             off_jetpack_wrapper, timeformat=ba.TimeFormat.MILLISECONDS)
 
 
 @powerup('heal_bombs', 'heart', freq=2, bomb_type='heal')
