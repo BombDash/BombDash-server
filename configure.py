@@ -22,15 +22,19 @@ def run(cmd, capture_stdout=False, show=True, doraise=True):
 def build(build_type, only_copy=False):
     run(f'mkdir -p build')
     os.chdir('build')
-    if not only_copy:
+    if only_copy:
+        run(f'cp -rf ../src/* {build_type}/dist/ba_data/')
+    else:
         if not os.path.exists('ballistica'):
             run('git clone "https://github.com/efroemling/ballistica"')
         else:
             run('cd ballistica && git pull')
+        run(f'cp -rf ../src/* ballistica/assets/src/ba_data/')
+        run('echo \'{"copyright_checks": false}\' > ballistica/config/localconfig.json')
+        run(f'cd ballistica && make update')
         run(f'cd ballistica && make prefab-server-{build_type}-build')
         run(f'rm -rf {build_type}')
         run(f'cp -r ballistica/build/prefab/linux-server/{build_type}/ .')
-    run(f'cp -rf ../src/* {build_type}/dist/ba_data/')
     os.chdir('..')
 
 
@@ -52,7 +56,7 @@ elif sys.argv[1] == 'run-debug':
 elif sys.argv[1] == 'copy-files-debug':
     build('debug', only_copy=True)
 elif sys.argv[1] == 'copy-files-release':
-    build('release', only_copy=True)
+    print('Oops.. only copy for release is very bad (python will use compiled .pyc files instead)')
 elif sys.argv[1] == 'mypy':
     run('python3.7 -m mypy --config-file config/mypy.ini src/python/')
 else:
