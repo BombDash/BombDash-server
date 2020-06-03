@@ -40,7 +40,7 @@ _players: List[PlayerData] = []
 
 
 def add_player(p_data: PlayerData) -> None:
-    if p_data in _players:
+    if get_player(p_data.id):
         del_player(p_data.id)
     _players.append(p_data)
 
