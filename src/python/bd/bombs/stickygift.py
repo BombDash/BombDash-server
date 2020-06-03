@@ -43,7 +43,7 @@ class StickyGiftFactory:
             actions=(
                 ('message', 'our_node',
                  'at_connect', SetStickyMessage())))
-        self.sticky_gift_texture = ba.gettexture('egg2')
+        self.sticky_gift_texture = ba.gettexture('bg')
         self.sticky_gift_model = bomb_factory.sticky_bomb_model
 
 
@@ -61,8 +61,8 @@ class StickyGift(MeBomb):
             'position': position,
             'velocity': velocity,
             'shadow_size': 0.44,
-            'reflection': 'powerup',
-            'reflection_scale': [1],
+            'reflection': 'sharper',
+            'reflection_scale': [0, 8.5, 10],
             'materials': materials})
 
     def on_drop(self, actor: stdbomb.Bomb):
