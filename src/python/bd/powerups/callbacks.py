@@ -59,7 +59,7 @@ def speed_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
     self.node.hockey = True
 
 
-@powerup('jetpack', texture='buttonJump', freq=1_00)
+@powerup('jetpack', texture='buttonJump', freq=1)
 def jetpack_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage) -> None:
     powerup_expiration_time = 10_000
 

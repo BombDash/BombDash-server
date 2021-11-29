@@ -21,11 +21,11 @@ class Chooser:
     @redefine_flag(RedefineFlag.REDEFINE)
     def _get_glowing_colors(self):
         """Search glowing code among profiles."""
-        try:
-            should_del = []
-            for i in self._profilenames:
-                for m in self._markers:
-                    if i.startswith(m + ','):
+        should_del = []
+        for i in self._profilenames:
+            for m in self._markers:
+                if i.startswith(m + ','):
+                    try:
                         code = i.split(',')
                         self.glow_dict[code[0]] = (
                             float(code[1]),
@@ -33,15 +33,15 @@ class Chooser:
                             int(code[3]),
                             int(code[4]))
                         # should_del.append(i)
-            for i in should_del:
-                self._profilenames.remove(i)
-        except Exception as err:
-            print(err)
-            ba.screenmessage(
-                get_locale('init_glowing_code_error'),
-                color=(1, 0, 0),
-                clients=[self._player.get_input_device().client_id],
-                transient=True)
+                    except Exception as err:
+                        print(err)
+                        ba.screenmessage(
+                            f"{i}: {get_locale('init_glowing_code_error')}",
+                            color=(1, 0, 0),
+                            clients=[self._sessionplayer.inputdevice.client_id],
+                            transient=True)
+        for i in should_del:
+            self._profilenames.remove(i)
 
     @redefine_flag(RedefineFlag.DECORATE_ADVANCED)
     def _getname(self, full=True, old_function=None):

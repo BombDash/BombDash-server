@@ -109,6 +109,7 @@ class Bomb(ba.Actor):
                  velocity=(0.0, 0.0, 0.0),
                  bomb_type: str = 'normal',
                  blast_radius: float = 2.0,
+                 bomb_scale: float = 1.0,
                  source_player: ba.Player = None,
                  owner: ba.Node = None):
         """Create a new Bomb.
@@ -119,7 +120,7 @@ class Bomb(ba.Actor):
         """
         mebomb: MeBomb = get_mebomb(bomb_type)
         if mebomb is None:
-            old_function(self, position, velocity, bomb_type, blast_radius, source_player, owner)
+            old_function(self, position, velocity, bomb_type, blast_radius, bomb_scale, source_player, owner)
             return
 
         ba.Actor.__init__(self)

@@ -1,2 +1,2 @@
-import bd  # КАКОГО ***а?! А хотя так даже лучше...
+import bd  # Pro hack: execute some redefinitions etc
 del bd

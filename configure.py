@@ -23,18 +23,19 @@ def build(build_type, only_copy=False):
     run(f'mkdir -p build')
     os.chdir('build')
     if only_copy:
-        run(f'cp -rf ../src/* {build_type}/dist/ba_data/')
+        run(f'cp -rf ../src/* {build_type}/dist/ba_data/') # TODO: use rsync instead
     else:
         if not os.path.exists('ballistica'):
             run('git clone "https://github.com/efroemling/ballistica"')
         else:
             run('cd ballistica && git pull')
         run(f'cp -rf ../src/* ballistica/assets/src/ba_data/')
-        run('echo \'{"copyright_checks": false}\' > ballistica/config/localconfig.json')
+        run('echo \'{"license_line_checks": false}\' > ballistica/config/localconfig.json')
+        run('ballistica/tools/pcommand install_pip_reqs')
         run(f'cd ballistica && make update')
         run(f'cd ballistica && make prefab-server-{build_type}-build')
         run(f'rm -rf {build_type}')
-        run(f'cp -r ballistica/build/prefab/linux-server/{build_type}/ .')
+        run(f'cp -r ballistica/build/prefab/full/linux_x86_64_server/{build_type}/ .')
     os.chdir('..')
 
 

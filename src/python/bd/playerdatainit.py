@@ -12,11 +12,17 @@ class GameActivity(ba.Activity):
     @redefine_flag(RedefineFlag.DECORATE_PRE)
     def on_player_join(self, player: ba.Player) -> None:
         account_id = player.sessionplayer.get_account_id()
-        info = serverapi.player.get(id=account_id)
-        if info.get('ban'):
-            import _ba
-            _ba.disconnect_client(player.sessionplayer.inputdevice.client_id)
-            return
+        info = {}
+        try:
+            info = serverapi.player.get(id=account_id)
+        except Exception:
+            ba.print_exception()
+            ba.screenmessage('Database is unavailable', color=[1, 0, 0])
+        else:
+            if info.get('ban'):
+                import _ba
+                _ba.disconnect_client(player.sessionplayer.inputdevice.client_id)
+                return
         p_data = PlayerData(
             id=account_id,
             client_id=player.sessionplayer.inputdevice.client_id,
