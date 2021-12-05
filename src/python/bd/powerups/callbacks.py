@@ -1,7 +1,7 @@
 # Copyright (c) 2020 BombDash
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 
 import random
 
@@ -263,25 +263,192 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
                       source_player=None,
                       hit_type='punch',
                       hit_subtype='normal')
-    elif event_number == 10:  # Blast-square under spaz
-        x = self.node.position[0] - 2
-        while x < self.node.position[0] + 2:
-            y = self.node.position[2] - 2
-            while y < self.node.position[2] + 2:
+    elif event_number == 10:
+        def blast(x: int, y: int, z: int) -> None:
+            # add sound
+            ba.NodeActor(node=ba.newnode('scorch',
+                                         attrs={
+                                             'position': (x, z, y),
+                                             'size': 0.2,
+                                             'big': False,
+                                         })).autoretain()
+
+        def smoke(x: int, y: int, z: int) -> None:
+            ba.emitfx(position=(x, z, y),
+                      velocity=(0, 2, 0),
+                      count=1,
+                      emit_type='tendrils',
+                      tendril_type='smoke')
+            ba.emitfx(position=(x, z, y),
+                      velocity=(0, 2, 0),
+                      count=int(1.0 + random.random() * 2),
+                      scale=0.8,
+                      spread=1.5,
+                      chunk_type='spark')
+
+        star_positions = [
+            (2, 0),
+            (0, 2),
+            (-1.2, -1.6),
+            (1.82, 0.83),
+            (-1.83, 0.82),
+            (1.23, -1.57),
+            (-1.25, 1.56),
+            (-0.65, 1.89),
+            (0.82, 1.82),
+            (1.27, 1.55),
+            (1.82, -0.84),
+            (0.31, -1.98),
+            (-0.42, -1.96),
+            (-1.75, -0.96),
+            (-2, -0.14),
+            (-0.69, -0.07),
+            (-0.39, 0.82),
+            (0.41, 0.82),
+            (0.71, -0.06),
+            (0.01, -0.62),
+            (-0.99, 0.82),
+            (-1.26, 0.37),
+            (-0.89, -0.65),
+            (-0.52, -1.05),
+            (0.59, -1.07),
+            (0.96, -0.8),
+            (1.22, 0.35),
+            (1.07, 0.82),
+            (0.21, 1.39),
+            (-0.17, 1.48),
+            # ---
+            (-1.94, 0.47),
+            (-1.51, 1.31),
+            (-0.95, 1.76),
+            (-0.38, 1.96),
+            (0.45, 1.95),
+            (1.05, 1.7),
+            (1.57, 1.24),
+            (1.94, 0.49),
+            (1.96, -0.42),
+            (1.62, -1.17),
+            (0.84, -1.82),
+            (-0.78, -1.84),
+            (-1.5, -1.33),
+            (-1.91, -0.59),
+            (-1.99, 0.17),
+            (-1, 0.17),
+            (-0.7, 0.82),
+            (-0.27, 1.19),
+            (0.29, 1.15),
+            (0.77, 0.82),
+            (1, 0.17),
+            (0.84, -0.42),
+            (0.31, -0.85),
+            (-0.8, -1.27),
+            (-1, -1),
+            (-0.56, 0.33),
+            (-0.47, 0.61),
+            (0.52, 0.51),
+            (-0.1, 0.82),
+            (0.13, 0.82),
+            (0.6, 0.27),
+            (0.46, -0.27),
+            (0.29, -0.4),
+            (-0.44, -0.27),
+            (-0.24, -0.42),
+            (-1.36, 0.82),
+            (-1.53, 0.59),
+            (1.35, 0.83),
+            (1.55, 0.61),
+            (0.85, -1.28),
+            (1.08, -1.13),
+            (0.78, -0.34),
+            (-0.21, -0.8),
+            (0.11, 1.68)
+        ]
+
+        class Sparkling(ba.Actor):
+            def __init__(self, position: Sequence[float], target: ba.Node):
+                super().__init__()
+                # nah; nodes not needed
+                self.position = position
+                self.position = (self.position[0], self.position[1] + 0.5, self.position[2])
+                self.target = target
+
+                ba.timer(0.001, ba.WeakCall(self._update))
+
+            def _sparkle(self):
+                ba.emitfx(position=self.position,
+                          velocity=(0, 1, 0),
+                          count=int(random.random() * 5 + 5),
+                          scale=0.8,
+                          spread=0.3,
+                          chunk_type='spark')
+
+            def _blast(self):
                 stdbomb.Blast(
-                    position=(x, self.node.position[1], y),
-                    velocity=(self.node.velocity[0],
-                              self.node.velocity[1] + 10,
-                              self.node.velocity[2]),
-                    blast_radius=0.5,
+                    position=self.position,
+                    velocity=self.target.velocity,
+                    blast_radius=2,
                     blast_type='normal',
                     source_player=None,
                     hit_type='punch',
-                    hit_subtype='normal')
+                    hit_subtype='normal').autoretain()
 
-                y += 1
+            def _update(self):
+                if not self.target:
+                    del self  # commit suicide because we have no goal in our existing :(
+                    return
+                d = ba.Vec3(self.target.position) - ba.Vec3(self.position)
 
-            x += 1
+                if d.length() < 0.1:
+                    self._blast()
+                    del self
+                    return
+
+                d = d.normalized() * 0.04
+
+                from math import sin, cos
+
+                self.position = (self.position[0] + d.x + sin(ba.time() * 2) * 0.03,
+                                 self.position[1] + d.y,
+                                 self.position[2] + d.z + cos(ba.time() * 2) * 0.03)
+                self._sparkle()
+
+                ba.timer(0.001, ba.WeakCall(self._update))
+
+        def sparkling(x, y, z):
+            Sparkling(position=(x, z, y), target=self.node).autoretain()
+
+        def summon_tnt(x, y, z):
+            stdbomb.Bomb(bomb_type='tnt', blast_radius=3, position=(x, z + 4, y), velocity=(0, -10, 0)).autoretain()
+
+        scale = 1
+        delta = 0.02
+
+        op = self.node.position
+        for i, (x, y) in enumerate(star_positions):
+            ba.timer(i * delta, ba.Call(blast, self.node.position[0] + x * scale, self.node.position[2] + y * scale,
+                                        self.node.position[1]))
+        for i in range(4):
+            ba.timer((len(star_positions)) * delta + i * 0.2, ba.Call(summon_tnt, op[0], op[2], op[1]))
+        ba.timer((len(star_positions)) * delta + 1.0,
+                 ba.Call(sparkling, self.node.position[0], self.node.position[2],
+                         self.node.position[1]))
+
+        def last_blast():
+            stdbomb.Blast(
+                position=self.node.position,
+                velocity=(self.node.velocity[0],
+                          self.node.velocity[1] + 10,
+                          self.node.velocity[2]),
+                blast_radius=2,
+                blast_type='normal',
+                source_player=None,
+                hit_type='punch',
+                hit_subtype='normal').autoretain()
+
+        # ba.timer(
+        #     2 * len(star_positions) * delta + 0.2,
+        #     last_blast)
+
     elif event_number == 11:
         offset = -15
         case = 1 if random.random() < 0.5 else -1
@@ -353,9 +520,9 @@ def lucky_block_callback(self: stdspaz.Spaz, msg: ba.PowerupMessage):
                 250: 0,
                 260: radius,
                 410: radius / 2,
-                510: 0}, 
-                timeformat=ba.TimeFormat.MILLISECONDS,
-                suppress_format_warning=True)
+                510: 0},
+                       timeformat=ba.TimeFormat.MILLISECONDS,
+                       suppress_format_warning=True)
 
             ba.animate_array(self.activity.globalsnode, 'vignette_outer', 3, {
                 0: vignette_outer, 0.2: (0.2, 0.2, 0.2), 0.51: vignette_outer})
